@@ -1,0 +1,17 @@
+#!/bin/sh
+# What the program leaves on the computer when it is removed: the hook that
+# signs after every update, and the copy of the key that only root can read.
+set -e
+
+case "$1" in
+    remove|purge)
+        rm -f /etc/apt/apt.conf.d/99soplos-kernel-installer-sign
+        rm -rf /var/lib/soplos-kernel-installer
+        ;;
+esac
+
+if [ "$1" = "purge" ]; then
+    rm -rf /etc/soplos-kernel-installer
+fi
+
+exit 0

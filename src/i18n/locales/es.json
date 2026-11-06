@@ -1,0 +1,456 @@
+{
+  "app": {
+    "window": { "minimize": "Minimizar", "maximize": "Maximizar", "restore": "Restaurar", "close": "Cerrar" },
+    "tabs": {
+      "build": { "label": "Compilar", "title": "Compilar un kernel" },
+      "kernels": { "label": "Kernels", "title": "Kernels" },
+      "installed": { "label": "Instalados", "title": "Kernels instalados" },
+      "secureboot": { "label": "Secure Boot", "title": "Secure Boot" },
+      "batch": { "label": "Lote", "title": "Compilación por lotes" }
+    }
+  },
+  "sidebar": {
+    "interfaceLanguage": "Idioma de esta ventana",
+    "switchToLight": "Cambiar al tema claro",
+    "switchToDark": "Cambiar al tema oscuro",
+    "aboutTooltip": "Acerca de Soplos Kernel Installer (F1)"
+  },
+  "common": {
+    "close": "Cerrar",
+    "cancel": "Cancelar",
+    "ok": "Aceptar"
+  },
+  "about": {
+    "version": "Versión {version}",
+    "tagline": "Compila e instala kernels de Linux en Soplos Linux",
+    "copyright": "Copyright © 2026 Sergi Perich",
+    "license": "Licenciado bajo la Licencia Pública General de GNU v3.0 o posterior"
+  },
+  "build": {
+    "title": "Soplos Kernel Installer",
+    "description": "Descarga un kernel, añade los parches que quieras, compílalo e instálalo junto al que usas ahora.",
+    "running": "En uso ahora: {kernel}",
+    "batchRunning": "Se está compilando un lote de kernels. Se sigue en la página Lote, que muestra Ctrl+Shift+D.",
+    "steps": { "goal": "Objetivo", "version": "Versión", "computer": "Tu equipo", "recipe": "Receta" },
+    "goal": {
+      "question": "¿Para qué vas a usar este equipo?",
+      "gaming": { "title": "Juegos", "text": "Baja latencia y el máximo rendimiento para jugar." },
+      "audio": { "title": "Audio y vídeo", "text": "Trabajo en tiempo real sin cortes: música, edición y directos." },
+      "minimal": { "title": "Oficina y uso diario", "text": "Un kernel ligero que ahorra recursos, bueno para equipos antiguos." },
+      "optimized": { "title": "Un poco de todo", "text": "El programa mira tu hardware e incluye lo que necesita." },
+      "stock": { "title": "No lo tengo claro", "text": "El kernel estándar de Soplos, sin cambios. Una opción segura." }
+    },
+    "version": {
+      "question": "¿Qué kernel quieres?",
+      "loading": "Leyendo la lista de kernels...",
+      "retry": "Reintentar",
+      "recommended": "RECOMENDADO",
+      "recommendedText": "El kernel estable más nuevo.",
+      "released": "publicado el {date}",
+      "longterm": "Larga duración",
+      "longtermText": "Menos cambios y correcciones durante años.",
+      "other": "Otras versiones estables",
+      "eol": "Ya no tiene mantenimiento",
+      "rcToggle": "Ayudar a probar versiones candidatas",
+      "rcText": "Una versión candidata es un kernel sin terminar. Probarla ayuda a Soplos a encontrar fallos y a hacer parches. Puede que no arranque.",
+      "rcTag": "versión candidata",
+      "noRustBinder": "Este kernel no tiene Binder en Rust: se compila sin Binder y sin Rust, y Waydroid no funcionará con él."
+    },
+    "computer": {
+      "title": "Tu equipo",
+      "level": "Nivel de arquitectura",
+      "levelText": "El kernel se optimiza para este nivel. Un nivel más bajo funciona en más equipos.",
+      "levelNo": "Tu procesador no admite este nivel",
+      "cores": "Núcleos para la compilación",
+      "space": "Espacio libre",
+      "spaceNeed": "hacen falta unos {gb} GB",
+      "spaceLow": "Puede que no haya espacio suficiente para la compilación.",
+      "tools": "Herramientas",
+      "toolsOk": "Todas instaladas",
+      "toolsInstall": "Se instalarán {count} al empezar",
+      "rustMissing": "No instalado: se instalará al empezar",
+      "nvidia": "Gráficos NVIDIA",
+      "nvidiaDriver": "Driver {version}",
+      "nvidiaNote": "Los parches de compatibilidad del driver se aplican antes de instalar, y su módulo se compila para el kernel nuevo. Si falla, el kernel se instala igualmente.",
+      "sign": "Secure Boot",
+      "signText": "Firmar el kernel con mi clave",
+      "signNoKey": "Todavía no tienes clave: créala antes en Secure Boot.",
+      "signGo": "Ir a Secure Boot"
+    },
+    "recipe": {
+      "title": "Tu kernel",
+      "name": "Nombre",
+      "nameHint": "Letras, números, puntos, guiones y guiones bajos, hasta 40.",
+      "patches": "Parches",
+      "patch": {
+        "bore": { "name": "BORE", "text": "Un planificador que responde más rápido a lo que haces." },
+        "rt": { "name": "PREEMPT_RT", "text": "Tiempo real: las tareas nunca se quedan esperando. Para audio y vídeo." },
+        "zen": { "name": "Zen", "text": "Ajustes para el escritorio y para los juegos." },
+        "ntsync": { "name": "NTSYNC", "text": "Ayuda a los juegos de Wine y Proton. Necesita kernel 6.14 o más nuevo." },
+        "x3d": { "name": "X3D V-Cache", "text": "Para procesadores AMD X3D: mantiene los juegos en los núcleos con la caché extra." }
+      },
+      "yes": "Sí",
+      "no": "No",
+      "advanced": "Avanzado",
+      "schedExt": "Activar sched_ext, el marco para planificadores",
+      "reuse": "Reutilizar las fuentes de una compilación anterior ({size} GB)",
+      "release": "Se llamará {release}",
+      "back": "Atrás",
+      "next": "Siguiente",
+      "start": "Compilar este kernel"
+    },
+    "progress": {
+      "title": "Compilando {release}",
+      "passwordNote": "Se pide tu contraseña al empezar, para instalar las herramientas, y al final, para instalar el kernel.",
+      "stages": {
+        "deps": "Herramientas",
+        "download": "Descarga",
+        "verify": "Comprobar la descarga",
+        "extract": "Extraer",
+        "patches": "Parches",
+        "config": "Configurar",
+        "build": "Compilar",
+        "packages": "Hacer los paquetes",
+        "install": "Instalar"
+      },
+      "cancel": "Cancelar",
+      "cancelTitle": "¿Cancelar la compilación?",
+      "cancelText": "La compilación se detiene. Lo descargado se queda en la carpeta de compilaciones.",
+      "keepGoing": "Seguir compilando",
+      "showLog": "Mostrar detalles",
+      "hideLog": "Ocultar detalles"
+    },
+    "result": {
+      "doneTitle": "{release} está instalado",
+      "doneText": "Reinicia el equipo y elígelo en el menú de arranque.",
+      "nvidiaOk": "El módulo de NVIDIA se compiló para este kernel.",
+      "nvidiaBad": "No se pudo compilar el módulo de NVIDIA para este kernel. Reinstala el driver desde Soplos Welcome.",
+      "restart": "Reiniciar ahora",
+      "installed": "Ver kernels instalados",
+      "again": "Compilar otro",
+      "clean": "Liberar los archivos de compilación",
+      "cleaned": "{size} GB liberados",
+      "failedTitle": "La compilación ha fallado",
+      "cancelledTitle": "La compilación se ha cancelado",
+      "backRecipe": "Volver a la receta"
+    }
+  },
+  "kernels": {
+    "description": "Instala kernels ya preparados sin compilar nada: los de Soplos, Debian, XanMod y Liquorix.",
+    "repo": {
+      "title": "Repositorio de kernels de Soplos",
+      "installed": "El repositorio está instalado.",
+      "notConfigured": "El repositorio no está configurado.",
+      "refresh": "Actualizar",
+      "remove": "Quitar repositorio",
+      "add": "Añadir repositorio"
+    },
+    "hardware": {
+      "tooltip": "¿Qué kernel me conviene?",
+      "title": "Tu equipo",
+      "cpu": "Procesador",
+      "level": "Nivel de arquitectura",
+      "gpu": "Gráficos",
+      "ram": "Memoria",
+      "ramValue": "{value} GB",
+      "advice": "Elige un kernel con este nivel de arquitectura o con uno inferior."
+    },
+    "filters": { "profile": "Perfil", "level": "Nivel", "all": "Todos" },
+    "list": {
+      "title": "Kernels de Soplos",
+      "loading": "Leyendo el repositorio...",
+      "empty": "No hay kernels en el repositorio.",
+      "noMatch": "Ningún kernel coincide con los filtros.",
+      "running": "en uso ahora",
+      "update": "Actualizar",
+      "remove": "Quitar",
+      "install": "Instalar"
+    },
+    "confirm": {
+      "removeRepoTitle": "¿Quitar el repositorio?",
+      "removeRepoText": "Se quitan el repositorio y su clave. Los kernels ya instalados se quedan como están.",
+      "removeKernelTitle": "¿Quitar este kernel?",
+      "removeKernelText": "Se quitan de este equipo el kernel, su imagen y sus cabeceras.",
+      "runningWarning": "Es el kernel que estás usando ahora. Arranca otro antes de reiniciar."
+    },
+    "errors": {
+      "addRepo": "No se pudo añadir el repositorio",
+      "refresh": "No se pudo actualizar el repositorio",
+      "removeRepo": "No se pudo quitar el repositorio",
+      "operation": "La operación ha fallado"
+    }
+  },
+  "others": {
+    "error": "La operación ha fallado",
+    "confirmTitle": "¿Quitar {name}?",
+    "secureBootNote": "Los kernels de XanMod y Liquorix no están firmados para Secure Boot. Con Secure Boot activado, fírmalos con tu propia clave en la guía de Secure Boot.",
+    "debian": {
+      "title": "Debian",
+      "description": "Los kernels oficiales de Debian.",
+      "standard": { "name": "Debian estándar", "description": "El kernel habitual de Debian para equipos de 64 bits." },
+      "rt": { "name": "Debian tiempo real", "description": "El kernel PREEMPT_RT de Debian, para audio y trabajos que no pueden esperar." },
+      "removeText": "Se quita el paquete que sigue al kernel más nuevo de Debian. Los kernels ya instalados se quedan hasta que los quites en la página Instalados."
+    },
+    "xanmod": {
+      "description": "Un kernel ajustado para el escritorio y los juegos, del repositorio de XanMod. El repositorio se añade por ti.",
+      "level": "Tu procesador admite el nivel {level}.",
+      "brokenRepo": "Un archivo antiguo del repositorio de XanMod estropea las actualizaciones de este equipo.",
+      "repair": "Reparar",
+      "tooOld": "Este procesador es demasiado antiguo para este kernel.",
+      "main": { "name": "Principal", "description": "El kernel estable más nuevo de XanMod." },
+      "rt": { "name": "Tiempo real", "description": "XanMod con planificación en tiempo real." },
+      "edge": { "name": "Edge", "description": "El kernel más nuevo de XanMod, para quien quiera probar." },
+      "lts": { "name": "LTS", "description": "XanMod con soporte a largo plazo." },
+      "removeText": "Se quitan el kernel y sus cabeceras, salvo el que estás usando ahora."
+    },
+    "liquorix": {
+      "description": "Un kernel ajustado para el escritorio, lo multimedia y los juegos, del repositorio de Liquorix. El repositorio se añade por ti.",
+      "removeText": "Se quitan el kernel, sus cabeceras y el repositorio, salvo el kernel que estás usando ahora."
+    }
+  },
+  "installed": {
+    "description": "Mira los kernels instalados en este equipo y quita los que ya no uses.",
+    "title": "Kernels de este equipo",
+    "loading": "Buscando kernels...",
+    "empty": "No se ha encontrado ningún kernel.",
+    "current": "El kernel que estás usando ahora",
+    "patches": "Parches: {value}",
+    "signed": "Firmado para Secure Boot",
+    "remove": "Quitar",
+    "confirmTitle": "¿Quitar el kernel {release}?",
+    "confirmText": "Se quitan el kernel y sus archivos y se actualiza el menú de arranque. Asegúrate de tener otro kernel instalado.",
+    "error": "No se pudo quitar el kernel",
+    "revoke": {
+      "title": "¿Revocar tu clave?",
+      "text": "Ya no hay ningún kernel ni cargador firmado con tu clave. Puedes quitarla del firmware para que deje de confiar en ella. La retirada se confirma en la pantalla azul del próximo reinicio, con la contraseña que pongas ahora.",
+      "action": "Revocar la clave",
+      "done": "La clave queda en cola para quitarse. Reinicia el equipo y confírmalo en la pantalla azul.",
+      "error": "No se pudo revocar la clave"
+    },
+    "profiles": {
+      "gaming": "Juegos",
+      "audio": "Audio / Vídeo",
+      "minimal": "Mínimo / Oficina",
+      "automatic": "Automático",
+      "lowlatency": "Baja latencia",
+      "cloud": "Nube",
+      "system": "Sistema"
+    }
+  },
+  "secureboot": {
+    "description": "Configura Secure Boot paso a paso para que tus propios kernels arranquen con él activado.",
+    "on": "Activado",
+    "off": "Desactivado",
+    "needKey": "Crea primero tu clave, en el paso anterior.",
+    "restart": "Reiniciar ahora",
+    "restartTitle": "¿Reiniciar el equipo?",
+    "restartText": "Guarda antes tu trabajo. El equipo se reinicia enseguida.",
+    "steps": { "check": "Comprobar", "key": "Crear clave", "enroll": "Confiar en la clave", "dkms": "Clave de drivers", "sign": "Firmar kernels", "enable": "Activarlo" },
+    "auto": {
+      "title": "Mantenerlo firmado",
+      "text": "Cuando una actualización reemplaza un kernel o el cargador de arranque, el archivo nuevo no lleva tu firma y el equipo no arrancaría con Secure Boot activado. Esto los firma por ti después de cada actualización.",
+      "note": "Se guarda una copia de tu clave en una carpeta que solo puede leer el administrador.",
+      "on": "La firma automática está activada",
+      "off": "La firma automática está desactivada",
+      "enable": "Activar",
+      "disable": "Desactivar"
+    },
+    "status": {
+      "title": "Cómo está todo",
+      "secureBoot": "Secure Boot",
+      "yourKey": "Tu clave",
+      "dkmsKey": "Clave de los drivers",
+      "firmwareKeys": "Claves en las que confía el firmware",
+      "none": "No creada",
+      "missing": "No existe",
+      "trusted": "Activa: el firmware confía en ella",
+      "waiting": "A la espera del reinicio",
+      "notTrusted": "El firmware todavía no confía en ella",
+      "keyCount": "{count} claves",
+      "show": "Ver",
+      "hide": "Ocultar",
+      "notListed": "No se pudo leer la lista",
+      "mine": "Tu clave",
+      "drivers": "Drivers"
+    },
+    "system": {
+      "title": "Tu equipo",
+      "computer": "Equipo",
+      "firmware": "Firmware",
+      "bootMode": "Modo de arranque",
+      "uefi": "UEFI",
+      "legacy": "BIOS clásica",
+      "setupMode": "Claves del firmware",
+      "setupOpen": "Abierto: se pueden añadir claves sin firma (modo de configuración)",
+      "setupProtected": "Protegido: los cambios necesitan firma (modo de usuario)",
+      "tpm": "TPM",
+      "tpmYes": "Presente",
+      "tpmNo": "No encontrado",
+      "bootloader": "Cargador de arranque",
+      "entry": "Entrada del firmware"
+    },
+    "loaders": {
+      "grub": "Arranca a través de shim. Shim confía en la clave de Debian y, una vez registrada, en la tuya (MOK).",
+      "systemdBoot": "Necesita shim delante para usar tu clave (MOK). Si se arranca directamente, solo la base de datos del firmware puede confiar en él.",
+      "limine": "No usa shim: el firmware tiene que confiar en tu certificado en su propia base de datos, y Limine comprueba el resto por hash.",
+      "payloadsTitle": "Kernels e imágenes de la partición de arranque",
+      "noPayloads": "No se ha encontrado ningún kernel en la partición de arranque. systemd-boot los carga desde ahí.",
+      "shimNote": "Si el firmware arranca systemd-boot directamente, tu clave tiene que estar en la base de datos del firmware y no en shim."
+    },
+    "limine": {
+      "title": "Refuerzo de Limine",
+      "text": "Limine comprueba por su hash cada archivo que carga, pero solo cuando el hash de su configuración está registrado en su propio binario. Esto calcula los hashes, registra la configuración en una copia limpia de Limine y la firma. Repítelo tras cada cambio de kernels o de configuración; con la firma automática activada se hace solo.",
+      "noConfig": "No se ha encontrado ningún limine.conf.",
+      "hashes": "{matching} de {total} archivos tienen el hash correcto",
+      "unresolved": "No se han encontrado {count} archivos",
+      "enrolled": "La configuración está registrada",
+      "notEnrolled": "La configuración no está registrada",
+      "needTool": "La herramienta limine no está instalada.",
+      "refresh": "Actualizar los hashes y registrar la configuración",
+      "certTitle": "Tu certificado en el firmware",
+      "certText": "Limine no usa shim, así que el firmware tiene que confiar en tu certificado en su propia base de datos. Cópialo a la partición de arranque y añádelo desde los ajustes del firmware, normalmente en Secure Boot, Key Management, db, Append o Enroll.",
+      "exportCert": "Copiar mi certificado a la partición de arranque",
+      "exported": "Copiado en {path}"
+    },
+    "signer": { "debian": "Firmado por Debian", "own": "Firmado con tu clave", "microsoft": "Firmado por Microsoft", "other": "Firmado por otro", "none": "Sin firmar" },
+    "chain": {
+      "title": "¿Arrancaría este equipo con Secure Boot activado?",
+      "shim": "shim está junto al cargador de arranque",
+      "loader": "El cargador de arranque está firmado por Debian o con tu clave",
+      "kernels": "Todos los kernels están firmados por Debian o con tu clave",
+      "autoSign": "Las actualizaciones se firman solas",
+      "autoSignOff": "Las actualizaciones no se firman solas: actívalo en el paso de firmar",
+      "payloads": "Los kernels e imágenes de la partición de arranque son de confianza",
+      "db": "El firmware confía en tu certificado en su propia base de datos",
+      "enrolled": "La configuración está registrada en Limine",
+      "hashes": "Cada archivo de limine.conf tiene el hash correcto",
+      "kernelsDetail": "{count} de {total} kernels no arrancarían",
+      "yes": "Sí: todo lo de la cadena es de confianza.",
+      "no": "Todavía no: algo de la cadena lo impediría. Arregla lo marcado arriba antes de activar Secure Boot."
+    },
+    "check": {
+      "intro": "Secure Boot es una función del firmware que solo deja arrancar software firmado. Los kernels que compilas, o que vienen de fuera, no están firmados por nadie en quien el firmware confíe. Esta guía crea tu propia clave, le dice al firmware que confíe en ella y firma tus kernels con ella. Los primeros pasos se hacen una sola vez.",
+      "tools": "Herramientas (mokutil, openssl, sbsigntool)",
+      "toolsOk": "Instaladas",
+      "toolsMissing": "Faltan",
+      "legacy": "Este equipo arranca en modo BIOS clásico, donde Secure Boot no existe. Puedes ignorar esta guía.",
+      "install": "Instalar las herramientas que faltan"
+    },
+    "key": {
+      "text": "La clave tiene dos mitades. La privada firma tus kernels y nunca sale de este equipo. La pública es la que le das al firmware.",
+      "created": "Tu clave está lista.",
+      "create": "Crear clave",
+      "needTools": "Instala antes las herramientas en el primer paso."
+    },
+    "enroll": {
+      "text": "Hay que decirle al firmware que confíe en tu clave. Ahora inventas una contraseña y la escribes una sola vez, en una pantalla azul, cuando el equipo se reinicie. Esto se hace solo una vez.",
+      "done": "El firmware ya confía en tu clave.",
+      "pendingTitle": "La clave espera al reinicio. Cuando el equipo arranque de nuevo:",
+      "blue1": "En la pantalla azul elige Enroll MOK.",
+      "blue2": "Elige Continue y después Yes.",
+      "blue3": "Escribe la contraseña que inventaste.",
+      "blue4": "Elige Reboot.",
+      "password": "Inventa una contraseña de al menos 8 caracteres. La necesitas una vez, en el reinicio.",
+      "register": "Registrar la clave"
+    },
+    "dkms": {
+      "text": "Los drivers que se compilan para cada kernel, como el de NVIDIA, se firman con una clave propia. El firmware también tiene que confiar en ella, o no cargarán con Secure Boot activado.",
+      "done": "El firmware ya confía en la clave de los drivers.",
+      "missing": "Hay módulos de drivers, pero falta su clave de firma. Reinstala el driver desde Soplos Welcome para crearla.",
+      "sameScreen": "Aparece en la misma pantalla azul que tu clave."
+    },
+    "sign": {
+      "text": "Un kernel tiene que estar firmado para arrancar con Secure Boot activado. Los kernels que compilas aquí pueden firmarse como parte de la compilación. Los que vienen de fuera, como XanMod o Liquorix, se firman aquí. El cargador de arranque también se firma.",
+      "none": "No se ha encontrado ningún kernel.",
+      "bootloaderTitle": "Cargador de arranque",
+      "bootloaderText": "El cargador de arranque inicia el kernel, así que el firmware tiene que confiar también en él. El de Debian viene firmado por Debian.",
+      "needTools": "Instala las herramientas en el primer paso para ver quién firmó cada archivo.",
+      "noBootloader": "No se ha encontrado ningún cargador de arranque en la partición de arranque.",
+      "signLoader": "Firmar lo que aún no es de confianza",
+      "version": "versión {version}",
+      "startedFrom": "arrancó este equipo",
+      "shimMissing": "no se encuentra shim",
+      "kernelsTitle": "Kernels",
+      "sign": "Firmar",
+      "all": "Firmar todos",
+      "build": "También puedes firmar un kernel al compilarlo.",
+      "goBuild": "Ir a Compilar"
+    },
+    "enable": {
+      "text": "El último paso se hace en el firmware, no en este programa.",
+      "step1": "Reinicia y abre los ajustes del firmware. Normalmente pulsando Supr, F2, F10 o Esc mientras arranca el equipo.",
+      "step2": "Busca la opción Secure Boot, normalmente en el menú Security o Boot.",
+      "step3": "Ponla en Enabled, guarda y sal.",
+      "isOn": "Secure Boot está activado",
+      "isOff": "Secure Boot está desactivado"
+    },
+    "password": {
+      "first": "Contraseña",
+      "second": "Repite la contraseña",
+      "tooShort": "La contraseña necesita al menos 8 caracteres.",
+      "mismatch": "Las contraseñas no coinciden."
+    },
+    "advanced": {
+      "title": "Avanzado",
+      "delete": "Quitar mi clave",
+      "deleteText": "Deja en cola quitar tu clave del firmware y la borra de este equipo. Los kernels firmados con ella dejarán de arrancar con Secure Boot activado.",
+      "deleteTitle": "¿Quitar tu clave?",
+      "deleteEnrolled": "El firmware confía en esta clave. Queda en cola para quitarse en el próximo reinicio, y necesitas una contraseña para confirmarlo en la pantalla azul.",
+      "deleteLocal": "La clave nunca llegó al firmware, así que solo se borran sus archivos de este equipo.",
+      "reset": "Reiniciar la base de claves",
+      "resetText": "Deja en cola quitar todas las claves registradas a mano, no solo la tuya. Sirve para limpiar claves viejas.",
+      "resetTitle": "¿Reiniciar la base de claves?",
+      "resetConfirm": "Todas las claves registradas a mano se quitan en el próximo reinicio y tendrás que registrar la tuya de nuevo. Necesitas una contraseña para confirmarlo en la pantalla azul."
+    },
+    "errors": {
+      "tools": "No se pudieron instalar las herramientas",
+      "key": "No se pudo crear la clave",
+      "enroll": "No se pudo registrar la clave",
+      "sign": "No se pudo firmar el kernel",
+      "delete": "No se pudo quitar la clave",
+      "reset": "No se pudo reiniciar la base de claves",
+      "limine": "No se pudo actualizar la configuración de Limine",
+      "cert": "No se pudo copiar el certificado",
+      "auto": "No se pudo cambiar la firma automática",
+      "restart": "No se pudo reiniciar el equipo"
+    }
+  },
+  "batch": {
+    "description": "Compila varios kernels uno detrás de otro.",
+    "version": "Versión del kernel",
+    "dest": "Carpeta de destino",
+    "destHint": "Los paquetes se guardan en <carpeta>/<versión>/V<nivel>/.",
+    "destRelative": "El destino tiene que ser una ruta completa, como /home/tu/kernels.",
+    "choose": "Elegir...",
+    "chooseTitle": "Elige la carpeta de destino",
+    "revision": "Revisión",
+    "revisionHint": "0 es una versión de kernel que nunca se ha compilado. Súbela solo al recompilar la misma versión con otros parches (1 es la primera recompilación), para que apt lo vea como una actualización real.",
+    "cores": "Núcleos",
+    "resume": "Reanudar: saltar los kernels que ya están compilados en el destino",
+    "kernels": "Kernels",
+    "selectAll": "Seleccionar todos",
+    "selectNone": "No seleccionar ninguno",
+    "selectedCount": "{n} de {total} seleccionados",
+    "built": "compilado",
+    "start": "Compilar {n} kernels",
+    "allBuilt": "Todos los kernels seleccionados ya están compilados en el destino.",
+    "confirmTitle": "¿Compilar toda la versión?",
+    "confirmText": "Se compilan {n} kernels de la versión {version} uno tras otro y se guardan en {dest}. Las fuentes se preparan de nuevo para cada kernel.",
+    "running": "Compilando {index} de {total}",
+    "finished": "Terminados: {names}",
+    "cancel": "Cancelar la cola",
+    "cancelTitle": "¿Cancelar la cola?",
+    "cancelText": "Se detiene la compilación en curso y la cola termina. Lo ya terminado se queda en el destino.",
+    "keepGoing": "Seguir compilando",
+    "showLog": "Mostrar detalles",
+    "hideLog": "Ocultar detalles",
+    "busy": "Hay otra compilación en curso. Espera a que termine.",
+    "doneTitle": "Se han compilado todos los kernels",
+    "doneText": "Se han guardado {n} kernels en {dest}.",
+    "failedTitle": "Ha fallado una compilación",
+    "failedText": "Se terminaron {n} kernels antes. Las fuentes y el registro del que falló se conservan en {folder}.",
+    "cancelledTitle": "La cola se ha cancelado",
+    "cancelledText": "Se terminaron {n} kernels antes.",
+    "again": "Nueva cola"
+  }
+}

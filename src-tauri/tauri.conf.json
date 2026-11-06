@@ -1,0 +1,78 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "soplos-kernel-installer",
+  "version": "3.0.0-beta",
+  "identifier": "org.soplos.kernelinstaller",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Soplos Kernel Installer",
+        "width": 1040,
+        "height": 760,
+        "minWidth": 880,
+        "minHeight": 560,
+        "resizable": true,
+        "decorations": false,
+        "transparent": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "deb"
+    ],
+    "publisher": "Sergi Perich",
+    "homepage": "https://soplos.org",
+    "copyright": "Copyright © 2026 Sergi Perich",
+    "license": "GPL-3.0-or-later",
+    "licenseFile": "../LICENSE",
+    "category": "Utility",
+    "shortDescription": "Build and install Linux kernels on Soplos Linux",
+    "longDescription": "Build your own Linux kernel with an assistant, install ready-made kernels from Soplos, Debian, XanMod and Liquorix, see and remove the installed ones, and set up Secure Boot step by step for GRUB, systemd-boot and Limine.",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.png"
+    ],
+    "linux": {
+      "deb": {
+        "section": "utils",
+        "priority": "optional",
+        "depends": [
+          "pkexec",
+          "apt",
+          "curl",
+          "gpg",
+          "pciutils",
+          "util-linux"
+        ],
+        "recommends": [
+          "mokutil",
+          "openssl",
+          "sbsigntool",
+          "efibootmgr"
+        ],
+        "changelog": "../CHANGELOG.md",
+        "files": {
+          "/usr/share/polkit-1/actions/org.soplos.kernelinstaller.policy": "resources/polkit/org.soplos.kernelinstaller.policy",
+          "/usr/share/metainfo/org.soplos.kernelinstaller.metainfo.xml": "resources/appstream/org.soplos.kernelinstaller.metainfo.xml",
+          "/usr/share/doc/soplos-kernel-installer/copyright": "resources/debian/copyright",
+          "/usr/share/man/man1/soplos-kernel-installer.1.gz": "resources/docs/soplos-kernel-installer.1.gz"
+        },
+        "desktopTemplate": "resources/debian/soplos-kernel-installer.desktop.hbs",
+        "postRemoveScript": "resources/debian/postrm"
+      }
+    }
+  }
+}

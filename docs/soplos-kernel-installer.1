@@ -1,0 +1,95 @@
+.TH "SOPLOS-KERNEL-INSTALLER" "1" "2026-11-06" "Soplos Linux" "User Commands"
+.SH NAME
+soplos-kernel-installer \- Build and install Linux kernels on Soplos Linux
+.SH SYNOPSIS
+.B soplos-kernel-installer
+.SH DESCRIPTION
+.B soplos-kernel-installer
+builds and installs Linux kernels on Soplos Linux. Built with Tauri 2, Rust and
+Svelte, it is organized in four pages and a hidden fifth one:
+.IP \[bu] 2
+.B Build:
+an assistant that asks what the computer is for, which kernel is wanted (the
+newest stable one, a long-term one, or a release candidate to help to test),
+what the computer is like and, at the end, shows a recipe that can be edited
+before the build. It downloads the kernel from kernel.org and checks it against
+the published hash, applies the patches, configures the kernel, compiles it in
+.I ~/kernel_build
+and installs it. A build goes on while the page is left, and can be cancelled.
+.IP \[bu]
+.B Kernels:
+installs and removes the ready-made kernels of Soplos, Debian (standard and
+real-time), XanMod and Liquorix, each with its own repository.
+.IP \[bu]
+.B Installed:
+lists the kernels found in
+.I /boot
+and removes the ones that are not running.
+.IP \[bu]
+.B Secure Boot:
+a step by step guide: it detects the bootloader (GRUB, systemd-boot or Limine),
+creates a key, makes the firmware trust it, signs kernels and bootloaders, and
+checks the whole chain before Secure Boot is turned on.
+.IP \[bu]
+.B Batch
+(hidden, shown with Ctrl+Shift+D): builds a whole release of kernels of
+Soplos, one after another, into a folder that is chosen.
+.P
+The interface is available in English, Spanish, German, French, Italian,
+Portuguese, Romanian and Russian. It starts in the system language and falls
+back to English.
+.SH KEYBOARD SHORTCUTS
+.TP
+.B F1
+About.
+.TP
+.B Ctrl+1 to Ctrl+4
+Build, Kernels, Installed and Secure Boot.
+.TP
+.B Ctrl+5
+Batch, when it is shown.
+.TP
+.B Ctrl+Shift+D
+Shows or hides the Batch page.
+.TP
+.B Ctrl+Q
+Quits.
+.SH SECURITY
+The window never runs as root. What needs the administrator is asked as named
+operations, under one polkit action,
+.IR org.soplos.kernelinstaller.run-privileged ,
+and the program checks each one again as root. The password of the firmware, when
+a key is enrolled, goes through the standard input of the administrator step and
+never touches a file.
+.SH FILES
+.TP
+.I ~/kernel_build
+The sources, the patches, the log (build.log) and the packages of the builds.
+.TP
+.I ~/.config/soplos-kernel-installer/keys
+The key of the user for Secure Boot. The private half never leaves the computer.
+.TP
+.I ~/.local/share/soplos-kernel-installer/history.json
+The kernels built with the program.
+.TP
+.I /var/lib/soplos-kernel-installer
+A copy of the key that only root can read, kept while the automatic signing is on.
+.TP
+.I /etc/apt/apt.conf.d/99soplos-kernel-installer-sign
+The hook that signs again, after every update, what was left without a signature.
+.TP
+.I /usr/share/polkit-1/actions/org.soplos.kernelinstaller.policy
+The polkit action of the program.
+.SH SEE ALSO
+.BR apt (8),
+.BR dkms (8),
+.BR mokutil (1),
+.BR sbsign (1),
+.BR pkexec (1)
+.SH AUTHOR
+Sergi Perich <info@soploslinux.com>
+.SH REPORTING BUGS
+https://github.com/SoplosLinux/soplos-kernel-installer-3.0/issues
+.SH COPYRIGHT
+Copyright \(co 2026 Sergi Perich. Licensed under the GNU General Public
+License v3.0 or later.

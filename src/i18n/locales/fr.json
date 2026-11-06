@@ -1,0 +1,456 @@
+{
+  "app": {
+    "window": { "minimize": "Réduire", "maximize": "Agrandir", "restore": "Restaurer", "close": "Fermer" },
+    "tabs": {
+      "build": { "label": "Compiler", "title": "Compiler un noyau" },
+      "kernels": { "label": "Noyaux", "title": "Noyaux" },
+      "installed": { "label": "Installés", "title": "Noyaux installés" },
+      "secureboot": { "label": "Secure Boot", "title": "Secure Boot" },
+      "batch": { "label": "Lot", "title": "Compilation par lots" }
+    }
+  },
+  "sidebar": {
+    "interfaceLanguage": "Langue de cette fenêtre",
+    "switchToLight": "Passer au thème clair",
+    "switchToDark": "Passer au thème sombre",
+    "aboutTooltip": "À propos de Soplos Kernel Installer (F1)"
+  },
+  "common": {
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "ok": "OK"
+  },
+  "about": {
+    "version": "Version {version}",
+    "tagline": "Compilez et installez des noyaux Linux sur Soplos Linux",
+    "copyright": "Copyright © 2026 Sergi Perich",
+    "license": "Sous licence GNU General Public License v3.0 ou ultérieure"
+  },
+  "build": {
+    "title": "Soplos Kernel Installer",
+    "description": "Téléchargez un noyau, ajoutez les correctifs que vous voulez, compilez-le et installez-le à côté de celui que vous utilisez.",
+    "running": "En cours : {kernel}",
+    "batchRunning": "Un lot de noyaux est en cours de compilation. Il se suit dans la page Lot, que Ctrl+Maj+D affiche.",
+    "steps": { "goal": "Objectif", "version": "Version", "computer": "Votre ordinateur", "recipe": "Recette" },
+    "goal": {
+      "question": "À quoi servira cet ordinateur ?",
+      "gaming": { "title": "Jeux", "text": "Faible latence et le plus de performances pour jouer." },
+      "audio": { "title": "Audio et vidéo", "text": "Travail en temps réel sans coupures : musique, montage et direct." },
+      "minimal": { "title": "Bureautique et usage quotidien", "text": "Un noyau léger qui économise les ressources, bon pour les vieux ordinateurs." },
+      "optimized": { "title": "Un peu de tout", "text": "Le programme regarde votre matériel et intègre ce qu'il lui faut." },
+      "stock": { "title": "Je ne sais pas", "text": "Le noyau standard de Soplos, sans changement. Un choix sûr." }
+    },
+    "version": {
+      "question": "Quel noyau voulez-vous ?",
+      "loading": "Lecture de la liste des noyaux...",
+      "retry": "Réessayer",
+      "recommended": "RECOMMANDÉ",
+      "recommendedText": "Le noyau stable le plus récent.",
+      "released": "publié le {date}",
+      "longterm": "Longue durée",
+      "longtermText": "Moins de changements et des correctifs pendant des années.",
+      "other": "Autres versions stables",
+      "eol": "N'est plus maintenu",
+      "rcToggle": "Aider à tester les versions candidates",
+      "rcText": "Une version candidate est un noyau pas fini. La tester aide Soplos à trouver des défauts et à faire des correctifs. Elle peut ne pas démarrer.",
+      "rcTag": "version candidate",
+      "noRustBinder": "Ce noyau n'a pas de Binder en Rust : il est compilé sans Binder et sans Rust, et Waydroid ne marchera pas avec lui."
+    },
+    "computer": {
+      "title": "Votre ordinateur",
+      "level": "Niveau d'architecture",
+      "levelText": "Le noyau est optimisé pour ce niveau. Un niveau plus bas fonctionne sur plus d'ordinateurs.",
+      "levelNo": "Votre processeur ne prend pas en charge ce niveau",
+      "cores": "Cœurs pour la compilation",
+      "space": "Espace libre",
+      "spaceNeed": "environ {gb} Go sont nécessaires",
+      "spaceLow": "Il se peut que l'espace ne suffise pas pour la compilation.",
+      "tools": "Outils",
+      "toolsOk": "Tous installés",
+      "toolsInstall": "{count} seront installés au démarrage",
+      "rustMissing": "Non installé : il sera installé au démarrage",
+      "nvidia": "Graphismes NVIDIA",
+      "nvidiaDriver": "Pilote {version}",
+      "nvidiaNote": "Les correctifs de compatibilité du pilote sont appliqués avant l'installation, et son module est compilé pour le nouveau noyau. Si cela échoue, le noyau est installé quand même.",
+      "sign": "Secure Boot",
+      "signText": "Signer le noyau avec ma clé",
+      "signNoKey": "Vous n'avez pas encore de clé : créez-la d'abord dans Secure Boot.",
+      "signGo": "Aller à Secure Boot"
+    },
+    "recipe": {
+      "title": "Votre noyau",
+      "name": "Nom",
+      "nameHint": "Lettres, chiffres, points, tirets et tirets bas, jusqu'à 40.",
+      "patches": "Correctifs",
+      "patch": {
+        "bore": { "name": "BORE", "text": "Un ordonnanceur qui répond plus vite à ce que vous faites." },
+        "rt": { "name": "PREEMPT_RT", "text": "Temps réel : les tâches n'attendent jamais. Pour l'audio et la vidéo." },
+        "zen": { "name": "Zen", "text": "Réglages pour le bureau et pour les jeux." },
+        "ntsync": { "name": "NTSYNC", "text": "Aide les jeux Wine et Proton. Demande un noyau 6.14 ou plus récent." },
+        "x3d": { "name": "X3D V-Cache", "text": "Pour les processeurs AMD X3D : garde les jeux sur les cœurs avec le cache en plus." }
+      },
+      "yes": "Oui",
+      "no": "Non",
+      "advanced": "Avancé",
+      "schedExt": "Activer sched_ext, le cadre pour les ordonnanceurs",
+      "reuse": "Réutiliser les sources d'une compilation précédente ({size} Go)",
+      "release": "Il s'appellera {release}",
+      "back": "Retour",
+      "next": "Suivant",
+      "start": "Compiler ce noyau"
+    },
+    "progress": {
+      "title": "Compilation de {release}",
+      "passwordNote": "Votre mot de passe est demandé au début, pour installer les outils, et à la fin, pour installer le noyau.",
+      "stages": {
+        "deps": "Outils",
+        "download": "Téléchargement",
+        "verify": "Vérifier le téléchargement",
+        "extract": "Extraire",
+        "patches": "Correctifs",
+        "config": "Configurer",
+        "build": "Compiler",
+        "packages": "Faire les paquets",
+        "install": "Installer"
+      },
+      "cancel": "Annuler",
+      "cancelTitle": "Annuler la compilation ?",
+      "cancelText": "La compilation s'arrête. Ce qui a été téléchargé reste dans le dossier des compilations.",
+      "keepGoing": "Continuer la compilation",
+      "showLog": "Afficher les détails",
+      "hideLog": "Masquer les détails"
+    },
+    "result": {
+      "doneTitle": "{release} est installé",
+      "doneText": "Redémarrez l'ordinateur et choisissez-le dans le menu de démarrage.",
+      "nvidiaOk": "Le module NVIDIA a été compilé pour ce noyau.",
+      "nvidiaBad": "Le module NVIDIA n'a pas pu être compilé pour ce noyau. Réinstallez le pilote depuis Soplos Welcome.",
+      "restart": "Redémarrer maintenant",
+      "installed": "Voir les noyaux installés",
+      "again": "En compiler un autre",
+      "clean": "Libérer les fichiers de compilation",
+      "cleaned": "{size} Go libérés",
+      "failedTitle": "La compilation a échoué",
+      "cancelledTitle": "La compilation a été annulée",
+      "backRecipe": "Retour à la recette"
+    }
+  },
+  "kernels": {
+    "description": "Installez des noyaux prêts à l'emploi sans rien compiler : ceux de Soplos, Debian, XanMod et Liquorix.",
+    "repo": {
+      "title": "Dépôt des noyaux Soplos",
+      "installed": "Le dépôt est installé.",
+      "notConfigured": "Le dépôt n'est pas configuré.",
+      "refresh": "Actualiser",
+      "remove": "Supprimer le dépôt",
+      "add": "Ajouter le dépôt"
+    },
+    "hardware": {
+      "tooltip": "Quel noyau convient à mon ordinateur ?",
+      "title": "Votre ordinateur",
+      "cpu": "Processeur",
+      "level": "Niveau d'architecture",
+      "gpu": "Graphismes",
+      "ram": "Mémoire",
+      "ramValue": "{value} Go",
+      "advice": "Choisissez un noyau de ce niveau d'architecture ou d'un niveau inférieur."
+    },
+    "filters": { "profile": "Profil", "level": "Niveau", "all": "Tous" },
+    "list": {
+      "title": "Noyaux de Soplos",
+      "loading": "Lecture du dépôt...",
+      "empty": "Le dépôt ne contient aucun noyau.",
+      "noMatch": "Aucun noyau ne correspond aux filtres.",
+      "running": "en cours d'utilisation",
+      "update": "Mettre à jour",
+      "remove": "Supprimer",
+      "install": "Installer"
+    },
+    "confirm": {
+      "removeRepoTitle": "Supprimer le dépôt ?",
+      "removeRepoText": "Le dépôt et sa clé sont supprimés. Les noyaux déjà installés restent en place.",
+      "removeKernelTitle": "Supprimer ce noyau ?",
+      "removeKernelText": "Le noyau, son image et ses en-têtes sont supprimés de cet ordinateur.",
+      "runningWarning": "C'est le noyau que vous utilisez en ce moment. Démarrez-en un autre avant de redémarrer."
+    },
+    "errors": {
+      "addRepo": "Le dépôt n'a pas pu être ajouté",
+      "refresh": "Le dépôt n'a pas pu être actualisé",
+      "removeRepo": "Le dépôt n'a pas pu être supprimé",
+      "operation": "L'opération a échoué"
+    }
+  },
+  "others": {
+    "error": "L'opération a échoué",
+    "confirmTitle": "Supprimer {name} ?",
+    "secureBootNote": "Les noyaux de XanMod et de Liquorix ne sont pas signés pour Secure Boot. Avec Secure Boot activé, signez-les avec votre propre clé dans le guide Secure Boot.",
+    "debian": {
+      "title": "Debian",
+      "description": "Les noyaux officiels de Debian.",
+      "standard": { "name": "Debian standard", "description": "Le noyau habituel de Debian pour les ordinateurs 64 bits." },
+      "rt": { "name": "Debian temps réel", "description": "Le noyau PREEMPT_RT de Debian, pour l'audio et les travaux qui ne peuvent pas attendre." },
+      "removeText": "Le paquet qui suit le noyau Debian le plus récent est supprimé. Les noyaux déjà installés restent jusqu'à ce que vous les supprimiez dans la page Installés."
+    },
+    "xanmod": {
+      "description": "Un noyau réglé pour le bureau et les jeux, du dépôt de XanMod. Le dépôt est ajouté pour vous.",
+      "level": "Votre processeur prend en charge le niveau {level}.",
+      "brokenRepo": "Un ancien fichier du dépôt XanMod perturbe les mises à jour de cet ordinateur.",
+      "repair": "Réparer",
+      "tooOld": "Ce processeur est trop ancien pour ce noyau.",
+      "main": { "name": "Principal", "description": "Le noyau XanMod stable le plus récent." },
+      "rt": { "name": "Temps réel", "description": "XanMod avec ordonnancement temps réel." },
+      "edge": { "name": "Edge", "description": "Le noyau XanMod le plus récent, pour ceux qui aiment tester." },
+      "lts": { "name": "LTS", "description": "XanMod avec support à long terme." },
+      "removeText": "Le noyau et ses en-têtes sont supprimés, sauf celui que vous utilisez en ce moment."
+    },
+    "liquorix": {
+      "description": "Un noyau réglé pour le bureau, le multimédia et les jeux, du dépôt de Liquorix. Le dépôt est ajouté pour vous.",
+      "removeText": "Le noyau, ses en-têtes et le dépôt sont supprimés, sauf le noyau que vous utilisez en ce moment."
+    }
+  },
+  "installed": {
+    "description": "Consultez les noyaux installés sur cet ordinateur et supprimez ceux que vous n'utilisez plus.",
+    "title": "Noyaux de cet ordinateur",
+    "loading": "Recherche des noyaux...",
+    "empty": "Aucun noyau trouvé.",
+    "current": "Le noyau que vous utilisez en ce moment",
+    "patches": "Correctifs : {value}",
+    "signed": "Signé pour Secure Boot",
+    "remove": "Supprimer",
+    "confirmTitle": "Supprimer le noyau {release} ?",
+    "confirmText": "Le noyau et ses fichiers sont supprimés et le menu de démarrage est mis à jour. Vérifiez qu'un autre noyau est installé.",
+    "error": "Le noyau n'a pas pu être supprimé",
+    "revoke": {
+      "title": "Révoquer votre clé ?",
+      "text": "Plus aucun noyau ni chargeur de démarrage n'est signé avec votre clé. Vous pouvez la retirer du firmware pour qu'il ne lui fasse plus confiance. Le retrait est confirmé sur l'écran bleu au prochain redémarrage, avec le mot de passe que vous choisissez maintenant.",
+      "action": "Révoquer la clé",
+      "done": "La clé est en attente de retrait. Redémarrez l'ordinateur et confirmez-le sur l'écran bleu.",
+      "error": "La clé n'a pas pu être révoquée"
+    },
+    "profiles": {
+      "gaming": "Jeux",
+      "audio": "Audio / Vidéo",
+      "minimal": "Minimal / Bureautique",
+      "automatic": "Automatique",
+      "lowlatency": "Faible latence",
+      "cloud": "Cloud",
+      "system": "Système"
+    }
+  },
+  "secureboot": {
+    "description": "Configurez Secure Boot pas à pas pour que vos propres noyaux démarrent avec lui activé.",
+    "on": "Activé",
+    "off": "Désactivé",
+    "needKey": "Créez d'abord votre clé, à l'étape précédente.",
+    "restart": "Redémarrer maintenant",
+    "restartTitle": "Redémarrer l'ordinateur ?",
+    "restartText": "Enregistrez d'abord votre travail. L'ordinateur redémarre tout de suite.",
+    "steps": { "check": "Vérifier", "key": "Créer la clé", "enroll": "Faire confiance à la clé", "dkms": "Clé des pilotes", "sign": "Signer les noyaux", "enable": "L'activer" },
+    "auto": {
+      "title": "Le garder signé",
+      "text": "Quand une mise à jour remplace un noyau ou le chargeur de démarrage, le nouveau fichier ne porte pas votre signature et l'ordinateur ne démarrerait pas avec Secure Boot activé. Ceci les signe pour vous après chaque mise à jour.",
+      "note": "Une copie de votre clé est gardée dans un dossier que seul l'administrateur peut lire.",
+      "on": "La signature automatique est activée",
+      "off": "La signature automatique est désactivée",
+      "enable": "Activer",
+      "disable": "Désactiver"
+    },
+    "status": {
+      "title": "Où en sont les choses",
+      "secureBoot": "Secure Boot",
+      "yourKey": "Votre clé",
+      "dkmsKey": "Clé des pilotes",
+      "firmwareKeys": "Clés auxquelles le firmware fait confiance",
+      "none": "Non créée",
+      "missing": "Absente",
+      "trusted": "Active : le firmware lui fait confiance",
+      "waiting": "En attente du redémarrage",
+      "notTrusted": "Le firmware ne lui fait pas encore confiance",
+      "keyCount": "{count} clés",
+      "show": "Afficher",
+      "hide": "Masquer",
+      "notListed": "La liste n'a pas pu être lue",
+      "mine": "Votre clé",
+      "drivers": "Pilotes"
+    },
+    "system": {
+      "title": "Votre ordinateur",
+      "computer": "Ordinateur",
+      "firmware": "Firmware",
+      "bootMode": "Mode de démarrage",
+      "uefi": "UEFI",
+      "legacy": "BIOS classique",
+      "setupMode": "Clés du firmware",
+      "setupOpen": "Ouvert : des clés peuvent être ajoutées sans signature (mode configuration)",
+      "setupProtected": "Protégé : les changements exigent une signature (mode utilisateur)",
+      "tpm": "TPM",
+      "tpmYes": "Présent",
+      "tpmNo": "Introuvable",
+      "bootloader": "Chargeur de démarrage",
+      "entry": "Entrée du firmware"
+    },
+    "loaders": {
+      "grub": "Démarre à travers shim. Shim fait confiance à la clé de Debian et, une fois enregistrée, à la vôtre (MOK).",
+      "systemdBoot": "A besoin de shim devant lui pour utiliser votre clé (MOK). Démarré directement, seule la base de données du firmware peut lui faire confiance.",
+      "limine": "N'utilise pas shim : le firmware doit faire confiance à votre certificat dans sa propre base de données, et Limine vérifie le reste par hash.",
+      "payloadsTitle": "Noyaux et images de la partition de démarrage",
+      "noPayloads": "Aucun noyau trouvé sur la partition de démarrage. systemd-boot les charge à partir de là.",
+      "shimNote": "Si le firmware démarre systemd-boot directement, votre clé doit être dans la base de données du firmware et non dans shim."
+    },
+    "limine": {
+      "title": "Renforcement de Limine",
+      "text": "Limine vérifie par son hash chaque fichier qu'il charge, mais seulement quand le hash de sa configuration est enregistré dans son propre binaire. Ceci calcule les hashes, enregistre la configuration dans une copie propre de Limine et la signe. Refaites-le après chaque changement de noyaux ou de configuration ; avec la signature automatique activée, c'est fait pour vous.",
+      "noConfig": "Aucun limine.conf trouvé.",
+      "hashes": "{matching} fichiers sur {total} ont le bon hash",
+      "unresolved": "{count} fichiers introuvables",
+      "enrolled": "La configuration est enregistrée",
+      "notEnrolled": "La configuration n'est pas enregistrée",
+      "needTool": "L'outil limine n'est pas installé.",
+      "refresh": "Mettre à jour les hashes et enregistrer la configuration",
+      "certTitle": "Votre certificat dans le firmware",
+      "certText": "Limine n'utilise pas shim, donc le firmware doit faire confiance à votre certificat dans sa propre base de données. Copiez-le sur la partition de démarrage et ajoutez-le depuis les réglages du firmware, en général sous Secure Boot, Key Management, db, Append ou Enroll.",
+      "exportCert": "Copier mon certificat sur la partition de démarrage",
+      "exported": "Copié dans {path}"
+    },
+    "signer": { "debian": "Signé par Debian", "own": "Signé avec votre clé", "microsoft": "Signé par Microsoft", "other": "Signé par quelqu'un d'autre", "none": "Non signé" },
+    "chain": {
+      "title": "Cet ordinateur démarrerait-il avec Secure Boot activé ?",
+      "shim": "shim est à côté du chargeur de démarrage",
+      "loader": "Le chargeur de démarrage est signé par Debian ou avec votre clé",
+      "kernels": "Chaque noyau est signé par Debian ou avec votre clé",
+      "autoSign": "Les mises à jour sont signées automatiquement",
+      "autoSignOff": "Les mises à jour ne sont pas signées automatiquement : activez-le à l'étape de signature",
+      "payloads": "Les noyaux et images de la partition de démarrage sont de confiance",
+      "db": "Le firmware fait confiance à votre certificat dans sa propre base de données",
+      "enrolled": "La configuration est enregistrée dans Limine",
+      "hashes": "Chaque fichier de limine.conf a le bon hash",
+      "kernelsDetail": "{count} noyaux sur {total} ne démarreraient pas",
+      "yes": "Oui : tout est de confiance dans la chaîne.",
+      "no": "Pas encore : quelque chose dans la chaîne l'empêcherait. Corrigez ce qui est marqué ci-dessus avant d'activer Secure Boot."
+    },
+    "check": {
+      "intro": "Secure Boot est une fonction du firmware qui ne laisse démarrer que des logiciels signés. Les noyaux que vous compilez, ou que vous prenez ailleurs, ne sont signés par personne en qui le firmware a confiance. Ce guide crée votre propre clé, dit au firmware de lui faire confiance et signe vos noyaux avec elle. Les premières étapes ne se font qu'une fois.",
+      "tools": "Outils (mokutil, openssl, sbsigntool)",
+      "toolsOk": "Installés",
+      "toolsMissing": "Manquants",
+      "legacy": "Cet ordinateur démarre en mode BIOS classique, où Secure Boot n'existe pas. Vous pouvez ignorer ce guide.",
+      "install": "Installer les outils manquants"
+    },
+    "key": {
+      "text": "La clé a deux moitiés. La privée signe vos noyaux et ne quitte jamais cet ordinateur. La publique est celle que vous donnez au firmware.",
+      "created": "Votre clé est prête.",
+      "create": "Créer la clé",
+      "needTools": "Installez d'abord les outils à la première étape."
+    },
+    "enroll": {
+      "text": "Il faut dire au firmware de faire confiance à votre clé. Vous inventez un mot de passe maintenant et vous le tapez une seule fois, sur un écran bleu, au redémarrage. Cela ne se fait qu'une fois.",
+      "done": "Le firmware fait déjà confiance à votre clé.",
+      "pendingTitle": "La clé attend le redémarrage. Quand l'ordinateur redémarre :",
+      "blue1": "Sur l'écran bleu, choisissez Enroll MOK.",
+      "blue2": "Choisissez Continue, puis Yes.",
+      "blue3": "Tapez le mot de passe que vous avez inventé.",
+      "blue4": "Choisissez Reboot.",
+      "password": "Inventez un mot de passe d'au moins 8 caractères. Vous en avez besoin une fois, au redémarrage.",
+      "register": "Enregistrer la clé"
+    },
+    "dkms": {
+      "text": "Les pilotes construits pour chaque noyau, comme celui de NVIDIA, sont signés avec une clé à eux. Le firmware doit aussi lui faire confiance, sinon ils ne se chargent pas avec Secure Boot activé.",
+      "done": "Le firmware fait déjà confiance à la clé des pilotes.",
+      "missing": "Il y a des modules de pilotes, mais leur clé de signature manque. Réinstallez le pilote depuis Soplos Welcome pour la créer.",
+      "sameScreen": "Elle apparaît sur le même écran bleu que votre clé."
+    },
+    "sign": {
+      "text": "Un noyau doit être signé pour démarrer avec Secure Boot activé. Les noyaux que vous compilez ici peuvent être signés pendant la compilation. Ceux qui viennent d'ailleurs, comme XanMod ou Liquorix, se signent ici. Le chargeur de démarrage est signé aussi.",
+      "none": "Aucun noyau trouvé.",
+      "bootloaderTitle": "Chargeur de démarrage",
+      "bootloaderText": "Le chargeur de démarrage lance le noyau, donc le firmware doit aussi lui faire confiance. Celui de Debian est signé par Debian.",
+      "needTools": "Installez les outils à la première étape pour voir qui a signé chaque fichier.",
+      "noBootloader": "Aucun chargeur de démarrage trouvé sur la partition de démarrage.",
+      "signLoader": "Signer ce qui n'est pas encore de confiance",
+      "version": "version {version}",
+      "startedFrom": "a démarré cet ordinateur",
+      "shimMissing": "shim introuvable",
+      "kernelsTitle": "Noyaux",
+      "sign": "Signer",
+      "all": "Tout signer",
+      "build": "Vous pouvez aussi signer un noyau en le compilant.",
+      "goBuild": "Aller à Compiler"
+    },
+    "enable": {
+      "text": "La dernière étape se fait dans le firmware, pas dans ce programme.",
+      "step1": "Redémarrez et ouvrez les réglages du firmware. En général en appuyant sur Suppr, F2, F10 ou Échap au démarrage de l'ordinateur.",
+      "step2": "Cherchez l'option Secure Boot, en général dans le menu Security ou Boot.",
+      "step3": "Mettez-la sur Enabled, enregistrez et quittez.",
+      "isOn": "Secure Boot est activé",
+      "isOff": "Secure Boot est désactivé"
+    },
+    "password": {
+      "first": "Mot de passe",
+      "second": "Répétez le mot de passe",
+      "tooShort": "Le mot de passe doit avoir au moins 8 caractères.",
+      "mismatch": "Les mots de passe ne correspondent pas."
+    },
+    "advanced": {
+      "title": "Avancé",
+      "delete": "Supprimer ma clé",
+      "deleteText": "Met en attente la suppression de votre clé du firmware et la supprime de cet ordinateur. Les noyaux signés avec elle ne démarreront plus avec Secure Boot activé.",
+      "deleteTitle": "Supprimer votre clé ?",
+      "deleteEnrolled": "Le firmware fait confiance à cette clé. Elle est mise en attente de suppression au prochain redémarrage, et vous avez besoin d'un mot de passe pour le confirmer sur l'écran bleu.",
+      "deleteLocal": "La clé n'est jamais arrivée au firmware, donc seuls ses fichiers sur cet ordinateur sont supprimés.",
+      "reset": "Réinitialiser la base de clés",
+      "resetText": "Met en attente la suppression de toutes les clés enregistrées à la main, pas seulement la vôtre. Utile pour nettoyer de vieilles clés.",
+      "resetTitle": "Réinitialiser la base de clés ?",
+      "resetConfirm": "Toutes les clés enregistrées à la main sont supprimées au prochain redémarrage et vous devrez enregistrer la vôtre de nouveau. Vous avez besoin d'un mot de passe pour le confirmer sur l'écran bleu."
+    },
+    "errors": {
+      "tools": "Les outils n'ont pas pu être installés",
+      "key": "La clé n'a pas pu être créée",
+      "enroll": "La clé n'a pas pu être enregistrée",
+      "sign": "Le noyau n'a pas pu être signé",
+      "delete": "La clé n'a pas pu être supprimée",
+      "reset": "La base de clés n'a pas pu être réinitialisée",
+      "limine": "La configuration de Limine n'a pas pu être mise à jour",
+      "cert": "Le certificat n'a pas pu être copié",
+      "auto": "La signature automatique n'a pas pu être modifiée",
+      "restart": "L'ordinateur n'a pas pu être redémarré"
+    }
+  },
+  "batch": {
+    "description": "Compilez plusieurs noyaux l'un après l'autre.",
+    "version": "Version du noyau",
+    "dest": "Dossier de destination",
+    "destHint": "Les paquets sont enregistrés dans <dossier>/<version>/V<niveau>/.",
+    "destRelative": "La destination doit être un chemin complet, comme /home/vous/noyaux.",
+    "choose": "Choisir...",
+    "chooseTitle": "Choisissez le dossier de destination",
+    "revision": "Révision",
+    "revisionHint": "0 est une version de noyau jamais compilée. Augmentez-la seulement pour recompiler la même version avec d'autres correctifs (1 est la première recompilation), afin qu'apt voie une vraie mise à jour.",
+    "cores": "Cœurs",
+    "resume": "Reprendre : ignorer les noyaux déjà compilés dans la destination",
+    "kernels": "Noyaux",
+    "selectAll": "Tout sélectionner",
+    "selectNone": "Ne rien sélectionner",
+    "selectedCount": "{n} sur {total} sélectionnés",
+    "built": "compilé",
+    "start": "Compiler {n} noyaux",
+    "allBuilt": "Tous les noyaux sélectionnés sont déjà compilés dans la destination.",
+    "confirmTitle": "Compiler toute la version ?",
+    "confirmText": "{n} noyaux de la version {version} sont compilés l'un après l'autre et enregistrés dans {dest}. Les sources sont refaites pour chaque noyau.",
+    "running": "Compilation {index} sur {total}",
+    "finished": "Terminés : {names}",
+    "cancel": "Annuler la file",
+    "cancelTitle": "Annuler la file ?",
+    "cancelText": "La compilation en cours est arrêtée et la file se termine. Ce qui est fini reste dans la destination.",
+    "keepGoing": "Continuer la compilation",
+    "showLog": "Afficher les détails",
+    "hideLog": "Masquer les détails",
+    "busy": "Une autre compilation est en cours. Attendez qu'elle se termine.",
+    "doneTitle": "Tous les noyaux ont été compilés",
+    "doneText": "{n} noyaux ont été enregistrés dans {dest}.",
+    "failedTitle": "Une compilation a échoué",
+    "failedText": "{n} noyaux étaient terminés avant. Les sources et le journal de celui qui a échoué sont gardés dans {folder}.",
+    "cancelledTitle": "La file a été annulée",
+    "cancelledText": "{n} noyaux étaient terminés avant.",
+    "again": "Nouvelle file"
+  }
+}

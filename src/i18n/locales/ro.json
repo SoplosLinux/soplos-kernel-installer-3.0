@@ -1,0 +1,456 @@
+{
+  "app": {
+    "window": { "minimize": "Minimizează", "maximize": "Maximizează", "restore": "Restaurează", "close": "Închide" },
+    "tabs": {
+      "build": { "label": "Compilare", "title": "Compilează un kernel" },
+      "kernels": { "label": "Kernele", "title": "Kernele" },
+      "installed": { "label": "Instalate", "title": "Kernele instalate" },
+      "secureboot": { "label": "Secure Boot", "title": "Secure Boot" },
+      "batch": { "label": "Lot", "title": "Compilare în lot" }
+    }
+  },
+  "sidebar": {
+    "interfaceLanguage": "Limba acestei ferestre",
+    "switchToLight": "Treci la tema luminoasă",
+    "switchToDark": "Treci la tema întunecată",
+    "aboutTooltip": "Despre Soplos Kernel Installer (F1)"
+  },
+  "common": {
+    "close": "Închide",
+    "cancel": "Anulează",
+    "ok": "OK"
+  },
+  "about": {
+    "version": "Versiunea {version}",
+    "tagline": "Compilează și instalează kernele Linux pe Soplos Linux",
+    "copyright": "Copyright © 2026 Sergi Perich",
+    "license": "Licențiat sub GNU General Public License v3.0 sau ulterioară"
+  },
+  "build": {
+    "title": "Soplos Kernel Installer",
+    "description": "Descarcă un kernel, adaugă patch-urile dorite, compilează-l și instalează-l lângă cel pe care îl folosești acum.",
+    "running": "În uz acum: {kernel}",
+    "batchRunning": "Se compilează un lot de kernele. Se urmărește în pagina Lot, pe care o arată Ctrl+Shift+D.",
+    "steps": { "goal": "Scop", "version": "Versiune", "computer": "Calculatorul tău", "recipe": "Rețetă" },
+    "goal": {
+      "question": "Pentru ce vei folosi acest calculator?",
+      "gaming": { "title": "Jocuri", "text": "Latență mică și cea mai mare performanță pentru jocuri." },
+      "audio": { "title": "Audio și video", "text": "Lucru în timp real fără întreruperi: muzică, montaj și transmisii." },
+      "minimal": { "title": "Birou și uz zilnic", "text": "Un kernel ușor care economisește resurse, bun pentru calculatoare vechi." },
+      "optimized": { "title": "Puțin din toate", "text": "Programul se uită la hardware-ul tău și include ce îi trebuie." },
+      "stock": { "title": "Nu sunt sigur", "text": "Kernelul standard Soplos, fără modificări. O alegere sigură." }
+    },
+    "version": {
+      "question": "Ce kernel vrei?",
+      "loading": "Se citește lista de kernele...",
+      "retry": "Încearcă din nou",
+      "recommended": "RECOMANDAT",
+      "recommendedText": "Cel mai nou kernel stabil.",
+      "released": "publicat pe {date}",
+      "longterm": "Pe termen lung",
+      "longtermText": "Mai puține schimbări și corecții ani la rând.",
+      "other": "Alte versiuni stabile",
+      "eol": "Nu mai este întreținut",
+      "rcToggle": "Ajută la testarea versiunilor candidate",
+      "rcText": "O versiune candidată este un kernel nefinisat. Testarea ei ajută Soplos să găsească defecte și să facă patch-uri. Poate să nu pornească.",
+      "rcTag": "versiune candidată",
+      "noRustBinder": "Acest kernel nu are Binder în Rust: este compilat fără Binder și fără Rust, iar Waydroid nu va funcționa cu el."
+    },
+    "computer": {
+      "title": "Calculatorul tău",
+      "level": "Nivel de arhitectură",
+      "levelText": "Kernelul este optimizat pentru acest nivel. Un nivel mai mic funcționează pe mai multe calculatoare.",
+      "levelNo": "Procesorul tău nu acceptă acest nivel",
+      "cores": "Nuclee pentru compilare",
+      "space": "Spațiu liber",
+      "spaceNeed": "sunt necesare circa {gb} GB",
+      "spaceLow": "Este posibil să nu fie destul spațiu pentru compilare.",
+      "tools": "Unelte",
+      "toolsOk": "Toate instalate",
+      "toolsInstall": "Se vor instala {count} la început",
+      "rustMissing": "Neinstalat: se va instala la început",
+      "nvidia": "Grafică NVIDIA",
+      "nvidiaDriver": "Driver {version}",
+      "nvidiaNote": "Patch-urile de compatibilitate ale driverului se aplică înainte de instalare, iar modulul lui se compilează pentru kernelul nou. Dacă eșuează, kernelul se instalează oricum.",
+      "sign": "Secure Boot",
+      "signText": "Semnează kernelul cu cheia mea",
+      "signNoKey": "Nu ai încă o cheie: creeaz-o mai întâi în Secure Boot.",
+      "signGo": "Mergi la Secure Boot"
+    },
+    "recipe": {
+      "title": "Kernelul tău",
+      "name": "Nume",
+      "nameHint": "Litere, cifre, puncte, cratime și liniuțe de subliniere, până la 40.",
+      "patches": "Patch-uri",
+      "patch": {
+        "bore": { "name": "BORE", "text": "Un planificator care răspunde mai repede la ce faci." },
+        "rt": { "name": "PREEMPT_RT", "text": "Timp real: sarcinile nu așteaptă niciodată. Pentru audio și video." },
+        "zen": { "name": "Zen", "text": "Ajustări pentru desktop și pentru jocuri." },
+        "ntsync": { "name": "NTSYNC", "text": "Ajută jocurile Wine și Proton. Cere kernel 6.14 sau mai nou." },
+        "x3d": { "name": "X3D V-Cache", "text": "Pentru procesoarele AMD X3D: ține jocurile pe nucleele cu cache în plus." }
+      },
+      "yes": "Da",
+      "no": "Nu",
+      "advanced": "Avansat",
+      "schedExt": "Activează sched_ext, cadrul pentru planificatoare",
+      "reuse": "Refolosește sursele unei compilări anterioare ({size} GB)",
+      "release": "Se va numi {release}",
+      "back": "Înapoi",
+      "next": "Înainte",
+      "start": "Compilează acest kernel"
+    },
+    "progress": {
+      "title": "Se compilează {release}",
+      "passwordNote": "Parola ta se cere la început, pentru a instala uneltele, și la sfârșit, pentru a instala kernelul.",
+      "stages": {
+        "deps": "Unelte",
+        "download": "Descărcare",
+        "verify": "Verifică descărcarea",
+        "extract": "Extragere",
+        "patches": "Patch-uri",
+        "config": "Configurare",
+        "build": "Compilare",
+        "packages": "Se fac pachetele",
+        "install": "Instalare"
+      },
+      "cancel": "Anulează",
+      "cancelTitle": "Anulezi compilarea?",
+      "cancelText": "Compilarea se oprește. Ce s-a descărcat rămâne în dosarul compilărilor.",
+      "keepGoing": "Continuă compilarea",
+      "showLog": "Arată detaliile",
+      "hideLog": "Ascunde detaliile"
+    },
+    "result": {
+      "doneTitle": "{release} este instalat",
+      "doneText": "Repornește calculatorul și alege-l în meniul de pornire.",
+      "nvidiaOk": "Modulul NVIDIA a fost compilat pentru acest kernel.",
+      "nvidiaBad": "Modulul NVIDIA nu a putut fi compilat pentru acest kernel. Reinstalează driverul din Soplos Welcome.",
+      "restart": "Repornește acum",
+      "installed": "Vezi kernelele instalate",
+      "again": "Compilează altul",
+      "clean": "Eliberează fișierele de compilare",
+      "cleaned": "{size} GB eliberați",
+      "failedTitle": "Compilarea a eșuat",
+      "cancelledTitle": "Compilarea a fost anulată",
+      "backRecipe": "Înapoi la rețetă"
+    }
+  },
+  "kernels": {
+    "description": "Instalează kernele gata făcute fără să compilezi nimic: cele de la Soplos, Debian, XanMod și Liquorix.",
+    "repo": {
+      "title": "Depozitul kernelelor Soplos",
+      "installed": "Depozitul este instalat.",
+      "notConfigured": "Depozitul nu este configurat.",
+      "refresh": "Reîmprospătează",
+      "remove": "Șterge depozitul",
+      "add": "Adaugă depozitul"
+    },
+    "hardware": {
+      "tooltip": "Ce kernel se potrivește calculatorului meu?",
+      "title": "Calculatorul tău",
+      "cpu": "Procesor",
+      "level": "Nivel de arhitectură",
+      "gpu": "Grafică",
+      "ram": "Memorie",
+      "ramValue": "{value} GB",
+      "advice": "Alege un kernel cu acest nivel de arhitectură sau cu unul mai mic."
+    },
+    "filters": { "profile": "Profil", "level": "Nivel", "all": "Toate" },
+    "list": {
+      "title": "Kernelele Soplos",
+      "loading": "Se citește depozitul...",
+      "empty": "Nu există kernele în depozit.",
+      "noMatch": "Niciun kernel nu corespunde filtrelor.",
+      "running": "în uz acum",
+      "update": "Actualizează",
+      "remove": "Șterge",
+      "install": "Instalează"
+    },
+    "confirm": {
+      "removeRepoTitle": "Ștergi depozitul?",
+      "removeRepoText": "Depozitul și cheia lui sunt șterse. Kernelele deja instalate rămân cum sunt.",
+      "removeKernelTitle": "Ștergi acest kernel?",
+      "removeKernelText": "Kernelul, imaginea lui și antetele lui sunt șterse de pe acest calculator.",
+      "runningWarning": "Acesta este kernelul pe care îl folosești acum. Pornește altul înainte de repornire."
+    },
+    "errors": {
+      "addRepo": "Depozitul nu a putut fi adăugat",
+      "refresh": "Depozitul nu a putut fi reîmprospătat",
+      "removeRepo": "Depozitul nu a putut fi șters",
+      "operation": "Operația a eșuat"
+    }
+  },
+  "others": {
+    "error": "Operația a eșuat",
+    "confirmTitle": "Ștergi {name}?",
+    "secureBootNote": "Kernelele XanMod și Liquorix nu sunt semnate pentru Secure Boot. Cu Secure Boot activ, semnează-le cu propria ta cheie în ghidul Secure Boot.",
+    "debian": {
+      "title": "Debian",
+      "description": "Kernelele oficiale Debian.",
+      "standard": { "name": "Debian standard", "description": "Kernelul obișnuit Debian pentru calculatoare pe 64 de biți." },
+      "rt": { "name": "Debian timp real", "description": "Kernelul PREEMPT_RT al Debian, pentru audio și lucrări care nu pot aștepta." },
+      "removeText": "Se șterge pachetul care urmărește cel mai nou kernel Debian. Kernelele deja instalate rămân până le ștergi din pagina Instalate."
+    },
+    "xanmod": {
+      "description": "Un kernel reglat pentru desktop și jocuri, din depozitul XanMod. Depozitul este adăugat pentru tine.",
+      "level": "Procesorul tău acceptă nivelul {level}.",
+      "brokenRepo": "Un fișier vechi al depozitului XanMod strică actualizările acestui calculator.",
+      "repair": "Repară",
+      "tooOld": "Acest procesor este prea vechi pentru acest kernel.",
+      "main": { "name": "Principal", "description": "Cel mai nou kernel XanMod stabil." },
+      "rt": { "name": "Timp real", "description": "XanMod cu planificare în timp real." },
+      "edge": { "name": "Edge", "description": "Cel mai nou kernel XanMod, pentru cine vrea să testeze." },
+      "lts": { "name": "LTS", "description": "XanMod cu suport pe termen lung." },
+      "removeText": "Kernelul și antetele lui sunt șterse, în afară de cel pe care îl folosești acum."
+    },
+    "liquorix": {
+      "description": "Un kernel reglat pentru desktop, multimedia și jocuri, din depozitul Liquorix. Depozitul este adăugat pentru tine.",
+      "removeText": "Kernelul, antetele lui și depozitul sunt șterse, în afară de kernelul pe care îl folosești acum."
+    }
+  },
+  "installed": {
+    "description": "Vezi kernelele instalate pe acest calculator și șterge-le pe cele pe care nu le mai folosești.",
+    "title": "Kernelele acestui calculator",
+    "loading": "Se caută kernele...",
+    "empty": "Nu s-a găsit niciun kernel.",
+    "current": "Kernelul pe care îl folosești acum",
+    "patches": "Patch-uri: {value}",
+    "signed": "Semnat pentru Secure Boot",
+    "remove": "Șterge",
+    "confirmTitle": "Ștergi kernelul {release}?",
+    "confirmText": "Kernelul și fișierele lui sunt șterse, iar meniul de pornire este actualizat. Asigură-te că ai instalat un alt kernel.",
+    "error": "Kernelul nu a putut fi șters",
+    "revoke": {
+      "title": "Revoci cheia ta?",
+      "text": "Niciun kernel și niciun încărcător de pornire nu mai este semnat cu cheia ta. O poți șterge din firmware ca să nu mai aibă încredere în ea. Ștergerea se confirmă pe ecranul albastru la următoarea repornire, cu parola pe care o stabilești acum.",
+      "action": "Revocă cheia",
+      "done": "Cheia este pusă la coadă pentru ștergere. Repornește calculatorul și confirmă pe ecranul albastru.",
+      "error": "Cheia nu a putut fi revocată"
+    },
+    "profiles": {
+      "gaming": "Jocuri",
+      "audio": "Audio / Video",
+      "minimal": "Minim / Birou",
+      "automatic": "Automat",
+      "lowlatency": "Latență mică",
+      "cloud": "Cloud",
+      "system": "Sistem"
+    }
+  },
+  "secureboot": {
+    "description": "Configurează Secure Boot pas cu pas, ca propriile tale kernele să pornească cu el activ.",
+    "on": "Activ",
+    "off": "Inactiv",
+    "needKey": "Creează mai întâi cheia ta, la pasul anterior.",
+    "restart": "Repornește acum",
+    "restartTitle": "Repornești calculatorul?",
+    "restartText": "Salvează mai întâi ce ai lucrat. Calculatorul repornește imediat.",
+    "steps": { "check": "Verificare", "key": "Creează cheia", "enroll": "Încrede-te în cheie", "dkms": "Cheia driverelor", "sign": "Semnează kernelele", "enable": "Activează" },
+    "auto": {
+      "title": "Păstrează-l semnat",
+      "text": "Când o actualizare înlocuiește un kernel sau încărcătorul de pornire, fișierul nou nu are semnătura ta, iar calculatorul nu ar porni cu Secure Boot activ. Aceasta le semnează pentru tine după fiecare actualizare.",
+      "note": "O copie a cheii tale este păstrată într-un dosar pe care îl poate citi doar administratorul.",
+      "on": "Semnarea automată este activă",
+      "off": "Semnarea automată este inactivă",
+      "enable": "Activează",
+      "disable": "Dezactivează"
+    },
+    "status": {
+      "title": "Cum stau lucrurile",
+      "secureBoot": "Secure Boot",
+      "yourKey": "Cheia ta",
+      "dkmsKey": "Cheia driverelor",
+      "firmwareKeys": "Chei în care firmware-ul are încredere",
+      "none": "Necreată",
+      "missing": "Lipsește",
+      "trusted": "Activă: firmware-ul are încredere în ea",
+      "waiting": "Așteaptă repornirea",
+      "notTrusted": "Firmware-ul nu are încă încredere în ea",
+      "keyCount": "{count} chei",
+      "show": "Arată",
+      "hide": "Ascunde",
+      "notListed": "Lista nu a putut fi citită",
+      "mine": "Cheia ta",
+      "drivers": "Drivere"
+    },
+    "system": {
+      "title": "Calculatorul tău",
+      "computer": "Calculator",
+      "firmware": "Firmware",
+      "bootMode": "Mod de pornire",
+      "uefi": "UEFI",
+      "legacy": "BIOS clasic",
+      "setupMode": "Cheile firmware-ului",
+      "setupOpen": "Deschis: se pot adăuga chei fără semnătură (mod de configurare)",
+      "setupProtected": "Protejat: modificările cer o semnătură (mod utilizator)",
+      "tpm": "TPM",
+      "tpmYes": "Prezent",
+      "tpmNo": "Negăsit",
+      "bootloader": "Încărcător de pornire",
+      "entry": "Intrarea firmware-ului"
+    },
+    "loaders": {
+      "grub": "Pornește prin shim. Shim are încredere în cheia Debian și, odată înregistrată, în a ta (MOK).",
+      "systemdBoot": "Are nevoie de shim în față ca să folosească cheia ta (MOK). Pornit direct, doar baza de date a firmware-ului poate avea încredere în el.",
+      "limine": "Nu folosește shim: firmware-ul trebuie să aibă încredere în certificatul tău în propria bază de date, iar Limine verifică restul prin hash.",
+      "payloadsTitle": "Kernele și imagini de pe partiția de pornire",
+      "noPayloads": "Nu s-a găsit niciun kernel pe partiția de pornire. systemd-boot le încarcă de acolo.",
+      "shimNote": "Dacă firmware-ul pornește systemd-boot direct, cheia ta trebuie să fie în baza de date a firmware-ului și nu în shim."
+    },
+    "limine": {
+      "title": "Întărirea Limine",
+      "text": "Limine verifică prin hash fiecare fișier pe care îl încarcă, dar numai când hash-ul configurației sale este înregistrat în propriul binar. Aceasta calculează hash-urile, înregistrează configurația într-o copie curată a Limine și o semnează. Repet-o după fiecare schimbare de kernele sau de configurație; cu semnarea automată activă, se face singură.",
+      "noConfig": "Nu s-a găsit niciun limine.conf.",
+      "hashes": "{matching} din {total} fișiere au hash-ul corect",
+      "unresolved": "{count} fișiere nu au fost găsite",
+      "enrolled": "Configurația este înregistrată",
+      "notEnrolled": "Configurația nu este înregistrată",
+      "needTool": "Unealta limine nu este instalată.",
+      "refresh": "Actualizează hash-urile și înregistrează configurația",
+      "certTitle": "Certificatul tău în firmware",
+      "certText": "Limine nu folosește shim, deci firmware-ul trebuie să aibă încredere în certificatul tău în propria bază de date. Copiază-l pe partiția de pornire și adaugă-l din setările firmware-ului, de obicei la Secure Boot, Key Management, db, Append sau Enroll.",
+      "exportCert": "Copiază certificatul meu pe partiția de pornire",
+      "exported": "Copiat în {path}"
+    },
+    "signer": { "debian": "Semnat de Debian", "own": "Semnat cu cheia ta", "microsoft": "Semnat de Microsoft", "other": "Semnat de altcineva", "none": "Nesemnat" },
+    "chain": {
+      "title": "Ar porni acest calculator cu Secure Boot activ?",
+      "shim": "shim este lângă încărcătorul de pornire",
+      "loader": "Încărcătorul de pornire este semnat de Debian sau cu cheia ta",
+      "kernels": "Fiecare kernel este semnat de Debian sau cu cheia ta",
+      "autoSign": "Actualizările se semnează automat",
+      "autoSignOff": "Actualizările nu se semnează automat: activează la pasul de semnare",
+      "payloads": "Kernelele și imaginile de pe partiția de pornire sunt de încredere",
+      "db": "Firmware-ul are încredere în certificatul tău în propria bază de date",
+      "enrolled": "Configurația este înregistrată în Limine",
+      "hashes": "Fiecare fișier din limine.conf are hash-ul corect",
+      "kernelsDetail": "{count} din {total} kernele nu ar porni",
+      "yes": "Da: tot ce e în lanț este de încredere.",
+      "no": "Încă nu: ceva din lanț l-ar opri. Rezolvă ce este marcat mai sus înainte de a activa Secure Boot."
+    },
+    "check": {
+      "intro": "Secure Boot este o funcție a firmware-ului care lasă să pornească doar software semnat. Kernelele pe care le compilezi, sau pe care le iei din afară, nu sunt semnate de nimeni în care firmware-ul are încredere. Acest ghid creează propria ta cheie, spune firmware-ului să aibă încredere în ea și semnează kernelele cu ea. Primii pași se fac o singură dată.",
+      "tools": "Unelte (mokutil, openssl, sbsigntool)",
+      "toolsOk": "Instalate",
+      "toolsMissing": "Lipsesc",
+      "legacy": "Acest calculator pornește în modul BIOS clasic, unde Secure Boot nu există. Poți ignora acest ghid.",
+      "install": "Instalează uneltele care lipsesc"
+    },
+    "key": {
+      "text": "Cheia are două jumătăți. Cea privată semnează kernelele tale și nu părăsește niciodată acest calculator. Cea publică este cea pe care o dai firmware-ului.",
+      "created": "Cheia ta este gata.",
+      "create": "Creează cheia",
+      "needTools": "Instalează mai întâi uneltele la primul pas."
+    },
+    "enroll": {
+      "text": "Trebuie spus firmware-ului să aibă încredere în cheia ta. Acum inventezi o parolă și o scrii o singură dată, pe un ecran albastru, la repornire. Se face o singură dată.",
+      "done": "Firmware-ul are deja încredere în cheia ta.",
+      "pendingTitle": "Cheia așteaptă repornirea. Când calculatorul pornește din nou:",
+      "blue1": "Pe ecranul albastru alege Enroll MOK.",
+      "blue2": "Alege Continue, apoi Yes.",
+      "blue3": "Scrie parola pe care ai inventat-o.",
+      "blue4": "Alege Reboot.",
+      "password": "Inventează o parolă de cel puțin 8 caractere. O ai nevoie o dată, la repornire.",
+      "register": "Înregistrează cheia"
+    },
+    "dkms": {
+      "text": "Driverele construite pentru fiecare kernel, ca cel NVIDIA, sunt semnate cu o cheie proprie. Firmware-ul trebuie să aibă încredere și în ea, altfel nu se încarcă cu Secure Boot activ.",
+      "done": "Firmware-ul are deja încredere în cheia driverelor.",
+      "missing": "Există module de drivere, dar lipsește cheia lor de semnare. Reinstalează driverul din Soplos Welcome ca să o creezi.",
+      "sameScreen": "Apare pe același ecran albastru cu cheia ta."
+    },
+    "sign": {
+      "text": "Un kernel trebuie semnat ca să pornească cu Secure Boot activ. Kernelele pe care le compilezi aici pot fi semnate în timpul compilării. Cele venite din afară, ca XanMod sau Liquorix, se semnează aici. Încărcătorul de pornire este semnat și el.",
+      "none": "Nu s-a găsit niciun kernel.",
+      "bootloaderTitle": "Încărcător de pornire",
+      "bootloaderText": "Încărcătorul de pornire lansează kernelul, deci firmware-ul trebuie să aibă încredere și în el. Cel de la Debian vine semnat de Debian.",
+      "needTools": "Instalează uneltele la primul pas ca să vezi cine a semnat fiecare fișier.",
+      "noBootloader": "Nu s-a găsit niciun încărcător de pornire pe partiția de pornire.",
+      "signLoader": "Semnează ce nu este încă de încredere",
+      "version": "versiunea {version}",
+      "startedFrom": "a pornit acest calculator",
+      "shimMissing": "shim nu a fost găsit",
+      "kernelsTitle": "Kernele",
+      "sign": "Semnează",
+      "all": "Semnează toate",
+      "build": "Poți semna un kernel și când îl compilezi.",
+      "goBuild": "Mergi la Compilare"
+    },
+    "enable": {
+      "text": "Ultimul pas se face în firmware, nu în acest program.",
+      "step1": "Repornește și deschide setările firmware-ului. De obicei apăsând Del, F2, F10 sau Esc la pornirea calculatorului.",
+      "step2": "Caută opțiunea Secure Boot, de obicei în meniul Security sau Boot.",
+      "step3": "Pune-o pe Enabled, salvează și ieși.",
+      "isOn": "Secure Boot este activ",
+      "isOff": "Secure Boot este inactiv"
+    },
+    "password": {
+      "first": "Parolă",
+      "second": "Repetă parola",
+      "tooShort": "Parola trebuie să aibă cel puțin 8 caractere.",
+      "mismatch": "Parolele nu coincid."
+    },
+    "advanced": {
+      "title": "Avansat",
+      "delete": "Șterge cheia mea",
+      "deleteText": "Pune la coadă ștergerea cheii tale din firmware și o șterge de pe acest calculator. Kernelele semnate cu ea nu vor mai porni cu Secure Boot activ.",
+      "deleteTitle": "Ștergi cheia ta?",
+      "deleteEnrolled": "Firmware-ul are încredere în această cheie. Este pusă la coadă pentru ștergere la următoarea repornire, iar ai nevoie de o parolă ca să confirmi pe ecranul albastru.",
+      "deleteLocal": "Cheia nu a ajuns niciodată în firmware, deci se șterg doar fișierele ei de pe acest calculator.",
+      "reset": "Resetează baza de chei",
+      "resetText": "Pune la coadă ștergerea tuturor cheilor înregistrate manual, nu doar a ta. Util pentru a curăța chei vechi.",
+      "resetTitle": "Resetezi baza de chei?",
+      "resetConfirm": "Toate cheile înregistrate manual sunt șterse la următoarea repornire și va trebui să o înregistrezi din nou pe a ta. Ai nevoie de o parolă ca să confirmi pe ecranul albastru."
+    },
+    "errors": {
+      "tools": "Uneltele nu au putut fi instalate",
+      "key": "Cheia nu a putut fi creată",
+      "enroll": "Cheia nu a putut fi înregistrată",
+      "sign": "Kernelul nu a putut fi semnat",
+      "delete": "Cheia nu a putut fi ștearsă",
+      "reset": "Baza de chei nu a putut fi resetată",
+      "limine": "Configurația Limine nu a putut fi actualizată",
+      "cert": "Certificatul nu a putut fi copiat",
+      "auto": "Semnarea automată nu a putut fi schimbată",
+      "restart": "Calculatorul nu a putut fi repornit"
+    }
+  },
+  "batch": {
+    "description": "Compilează mai multe kernele unul după altul.",
+    "version": "Versiunea kernelului",
+    "dest": "Dosar de destinație",
+    "destHint": "Pachetele se salvează în <dosar>/<versiune>/V<nivel>/.",
+    "destRelative": "Destinația trebuie să fie o cale completă, ca /home/tu/kernele.",
+    "choose": "Alege...",
+    "chooseTitle": "Alege dosarul de destinație",
+    "revision": "Revizie",
+    "revisionHint": "0 este o versiune de kernel niciodată compilată. Mărește-o doar când recompilezi aceeași versiune cu alte patch-uri (1 este prima recompilare), ca apt să vadă o actualizare reală.",
+    "cores": "Nuclee",
+    "resume": "Reia: sari peste kernelele deja compilate în destinație",
+    "kernels": "Kernele",
+    "selectAll": "Selectează toate",
+    "selectNone": "Nu selecta niciunul",
+    "selectedCount": "{n} din {total} selectate",
+    "built": "compilat",
+    "start": "Compilează {n} kernele",
+    "allBuilt": "Toate kernelele selectate sunt deja compilate în destinație.",
+    "confirmTitle": "Compilezi toată versiunea?",
+    "confirmText": "{n} kernele ale versiunii {version} se compilează unul după altul și se salvează în {dest}. Sursele se refac pentru fiecare kernel.",
+    "running": "Se compilează {index} din {total}",
+    "finished": "Terminate: {names}",
+    "cancel": "Anulează coada",
+    "cancelTitle": "Anulezi coada?",
+    "cancelText": "Compilarea în curs se oprește, iar coada se termină. Ce s-a terminat rămâne în destinație.",
+    "keepGoing": "Continuă compilarea",
+    "showLog": "Arată detaliile",
+    "hideLog": "Ascunde detaliile",
+    "busy": "Este în curs o altă compilare. Așteaptă să se termine.",
+    "doneTitle": "Toate kernelele au fost compilate",
+    "doneText": "{n} kernele au fost salvate în {dest}.",
+    "failedTitle": "O compilare a eșuat",
+    "failedText": "Înainte se terminaseră {n} kernele. Sursele și jurnalul celui eșuat rămân în {folder}.",
+    "cancelledTitle": "Coada a fost anulată",
+    "cancelledText": "Înainte se terminaseră {n} kernele.",
+    "again": "Coadă nouă"
+  }
+}

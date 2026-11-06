@@ -1,0 +1,456 @@
+{
+  "app": {
+    "window": { "minimize": "Minimize", "maximize": "Maximize", "restore": "Restore", "close": "Close" },
+    "tabs": {
+      "build": { "label": "Build", "title": "Build a kernel" },
+      "kernels": { "label": "Kernels", "title": "Kernels" },
+      "installed": { "label": "Installed", "title": "Installed kernels" },
+      "secureboot": { "label": "Secure Boot", "title": "Secure Boot" },
+      "batch": { "label": "Batch", "title": "Batch build" }
+    }
+  },
+  "sidebar": {
+    "interfaceLanguage": "Language of this window",
+    "switchToLight": "Switch to the light theme",
+    "switchToDark": "Switch to the dark theme",
+    "aboutTooltip": "About Soplos Kernel Installer (F1)"
+  },
+  "common": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "ok": "OK"
+  },
+  "about": {
+    "version": "Version {version}",
+    "tagline": "Build and install Linux kernels on Soplos Linux",
+    "copyright": "Copyright © 2026 Sergi Perich",
+    "license": "Licensed under the GNU General Public License v3.0 or later"
+  },
+  "build": {
+    "title": "Soplos Kernel Installer",
+    "description": "Download a kernel, add the patches you want, compile it and install it next to the one you use now.",
+    "running": "Running now: {kernel}",
+    "batchRunning": "A batch of kernels is being built. It is followed in the Batch page, which Ctrl+Shift+D shows.",
+    "steps": { "goal": "Goal", "version": "Version", "computer": "Your computer", "recipe": "Recipe" },
+    "goal": {
+      "question": "What will you use this computer for?",
+      "gaming": { "title": "Games", "text": "Low latency and the most performance for games." },
+      "audio": { "title": "Audio and video", "text": "Real-time work with no cuts: music, editing and streaming." },
+      "minimal": { "title": "Office and everyday use", "text": "A light kernel that saves resources, good for older computers." },
+      "optimized": { "title": "A bit of everything", "text": "The program looks at your hardware and builds in what it needs." },
+      "stock": { "title": "I am not sure", "text": "The standard kernel of Soplos, with no changes. A safe choice." }
+    },
+    "version": {
+      "question": "Which kernel do you want?",
+      "loading": "Reading the list of kernels...",
+      "retry": "Try again",
+      "recommended": "RECOMMENDED",
+      "recommendedText": "The newest stable kernel.",
+      "released": "released {date}",
+      "longterm": "Long-term",
+      "longtermText": "Fewer changes and fixes for years.",
+      "other": "Other stable versions",
+      "eol": "No longer maintained",
+      "rcToggle": "Help to test release candidates",
+      "rcText": "A release candidate is a kernel that is not finished. Testing it helps Soplos find failures and make patches. It may not start.",
+      "rcTag": "release candidate",
+      "noRustBinder": "This kernel has no Rust Binder: it is built without Binder and without Rust, and Waydroid will not work with it."
+    },
+    "computer": {
+      "title": "Your computer",
+      "level": "Architecture level",
+      "levelText": "The kernel is optimized for this level. A lower level works on more computers.",
+      "levelNo": "Your processor does not support this level",
+      "cores": "Cores for the build",
+      "space": "Free space",
+      "spaceNeed": "about {gb} GB are needed",
+      "spaceLow": "There may not be enough space for the build.",
+      "tools": "Tools",
+      "toolsOk": "All installed",
+      "toolsInstall": "{count} will be installed when you start",
+      "rustMissing": "Not installed: it will be installed when you start",
+      "nvidia": "NVIDIA graphics",
+      "nvidiaDriver": "Driver {version}",
+      "nvidiaNote": "The compatibility patches of the driver are applied before installing, and its module is built for the new kernel. If that fails, the kernel is installed anyway.",
+      "sign": "Secure Boot",
+      "signText": "Sign the kernel with my key",
+      "signNoKey": "You have no key yet: create it in Secure Boot first.",
+      "signGo": "Go to Secure Boot"
+    },
+    "recipe": {
+      "title": "Your kernel",
+      "name": "Name",
+      "nameHint": "Letters, numbers, dots, hyphens and underscores, up to 40.",
+      "patches": "Patches",
+      "patch": {
+        "bore": { "name": "BORE", "text": "A scheduler that answers faster to what you do." },
+        "rt": { "name": "PREEMPT_RT", "text": "Real-time: tasks are never kept waiting. For audio and video." },
+        "zen": { "name": "Zen", "text": "Adjustments for the desktop and for games." },
+        "ntsync": { "name": "NTSYNC", "text": "Helps Wine and Proton games. Needs kernel 6.14 or newer." },
+        "x3d": { "name": "X3D V-Cache", "text": "For AMD X3D processors: keeps games on the cores with the extra cache." }
+      },
+      "yes": "Yes",
+      "no": "No",
+      "advanced": "Advanced",
+      "schedExt": "Turn on sched_ext, the framework for schedulers",
+      "reuse": "Reuse the sources of an earlier build ({size} GB)",
+      "release": "It will be called {release}",
+      "back": "Back",
+      "next": "Next",
+      "start": "Compile this kernel"
+    },
+    "progress": {
+      "title": "Building {release}",
+      "passwordNote": "Your password is asked for at the start, to install the tools, and at the end, to install the kernel.",
+      "stages": {
+        "deps": "Tools",
+        "download": "Download",
+        "verify": "Check the download",
+        "extract": "Extract",
+        "patches": "Patches",
+        "config": "Configure",
+        "build": "Compile",
+        "packages": "Make the packages",
+        "install": "Install"
+      },
+      "cancel": "Cancel",
+      "cancelTitle": "Cancel the build?",
+      "cancelText": "The build stops. What was downloaded stays in the folder of builds.",
+      "keepGoing": "Keep building",
+      "showLog": "Show details",
+      "hideLog": "Hide details"
+    },
+    "result": {
+      "doneTitle": "{release} is installed",
+      "doneText": "Restart the computer and choose it in the boot menu.",
+      "nvidiaOk": "The NVIDIA module was built for this kernel.",
+      "nvidiaBad": "The NVIDIA module could not be built for this kernel. Reinstall the driver from Soplos Welcome.",
+      "restart": "Restart now",
+      "installed": "See installed kernels",
+      "again": "Build another",
+      "clean": "Free the build files",
+      "cleaned": "{size} GB freed",
+      "failedTitle": "The build failed",
+      "cancelledTitle": "The build was cancelled",
+      "backRecipe": "Back to the recipe"
+    }
+  },
+  "kernels": {
+    "description": "Install ready-made kernels without compiling anything: the ones of Soplos, Debian, XanMod and Liquorix.",
+    "repo": {
+      "title": "Repository of Soplos kernels",
+      "installed": "The repository is installed.",
+      "notConfigured": "The repository is not configured.",
+      "refresh": "Refresh",
+      "remove": "Remove repository",
+      "add": "Add repository"
+    },
+    "hardware": {
+      "tooltip": "Which kernel is right for my computer?",
+      "title": "Your computer",
+      "cpu": "Processor",
+      "level": "Architecture level",
+      "gpu": "Graphics",
+      "ram": "Memory",
+      "ramValue": "{value} GB",
+      "advice": "Choose a kernel with this architecture level or a lower one."
+    },
+    "filters": { "profile": "Profile", "level": "Level", "all": "All" },
+    "list": {
+      "title": "Kernels of Soplos",
+      "loading": "Reading the repository...",
+      "empty": "There are no kernels in the repository.",
+      "noMatch": "No kernel matches the filters.",
+      "running": "running now",
+      "update": "Update",
+      "remove": "Remove",
+      "install": "Install"
+    },
+    "confirm": {
+      "removeRepoTitle": "Remove the repository?",
+      "removeRepoText": "The repository and its key are removed. The kernels already installed stay as they are.",
+      "removeKernelTitle": "Remove this kernel?",
+      "removeKernelText": "The kernel, its image and its headers are removed from this computer.",
+      "runningWarning": "This is the kernel you are running now. Start another one before you restart."
+    },
+    "errors": {
+      "addRepo": "The repository could not be added",
+      "refresh": "The repository could not be refreshed",
+      "removeRepo": "The repository could not be removed",
+      "operation": "The operation failed"
+    }
+  },
+  "others": {
+    "error": "The operation failed",
+    "confirmTitle": "Remove {name}?",
+    "secureBootNote": "The kernels of XanMod and Liquorix are not signed for Secure Boot. With Secure Boot on, sign them with your own key in the Secure Boot guide.",
+    "debian": {
+      "title": "Debian",
+      "description": "The official kernels of Debian.",
+      "standard": { "name": "Debian standard", "description": "The usual kernel of Debian for 64-bit computers." },
+      "rt": { "name": "Debian real-time", "description": "The PREEMPT_RT kernel of Debian, for audio and other work that cannot wait." },
+      "removeText": "The package that follows the newest Debian kernel is removed. The kernels already installed stay until you remove them in the Installed page."
+    },
+    "xanmod": {
+      "description": "A kernel tuned for the desktop and for gaming, from the repository of XanMod. The repository is added for you.",
+      "level": "Your processor supports level {level}.",
+      "brokenRepo": "An old XanMod repository file breaks the updates of this computer.",
+      "repair": "Repair",
+      "tooOld": "This processor is too old for this kernel.",
+      "main": { "name": "Main", "description": "The newest stable XanMod kernel." },
+      "rt": { "name": "Real-time", "description": "XanMod with real-time scheduling." },
+      "edge": { "name": "Edge", "description": "The newest XanMod kernel, for those who like to test." },
+      "lts": { "name": "LTS", "description": "XanMod with long-term support." },
+      "removeText": "The kernel and its headers are removed, except the one you are running now."
+    },
+    "liquorix": {
+      "description": "A kernel tuned for the desktop, multimedia and gaming, from the repository of Liquorix. The repository is added for you.",
+      "removeText": "The kernel, its headers and the repository are removed, except the kernel you are running now."
+    }
+  },
+  "installed": {
+    "description": "See the kernels installed on this computer and remove the ones you no longer use.",
+    "title": "Kernels on this computer",
+    "loading": "Looking for kernels...",
+    "empty": "No kernels found.",
+    "current": "The kernel you are running now",
+    "patches": "Patches: {value}",
+    "signed": "Signed for Secure Boot",
+    "remove": "Remove",
+    "confirmTitle": "Remove kernel {release}?",
+    "confirmText": "The kernel and its files are removed and the boot menu is updated. Make sure another kernel is installed.",
+    "error": "The kernel could not be removed",
+    "revoke": {
+      "title": "Revoke your key?",
+      "text": "No kernel or bootloader is signed with your key any more. You can remove the key from the firmware so that it no longer trusts it. The removal is confirmed on the blue screen at the next restart, with the password you set now.",
+      "action": "Revoke the key",
+      "done": "The key is queued for removal. Restart the computer and confirm it on the blue screen.",
+      "error": "The key could not be revoked"
+    },
+    "profiles": {
+      "gaming": "Gaming",
+      "audio": "Audio / Video",
+      "minimal": "Minimal / Office",
+      "automatic": "Automatic",
+      "lowlatency": "Low latency",
+      "cloud": "Cloud",
+      "system": "System"
+    }
+  },
+  "secureboot": {
+    "description": "Set up Secure Boot step by step so that your own kernels can start with it on.",
+    "on": "On",
+    "off": "Off",
+    "needKey": "Create your key first, in the previous step.",
+    "restart": "Restart now",
+    "restartTitle": "Restart the computer?",
+    "restartText": "Save your work first. The computer restarts right away.",
+    "steps": { "check": "Check", "key": "Create key", "enroll": "Trust the key", "dkms": "Drivers key", "sign": "Sign kernels", "enable": "Turn it on" },
+    "auto": {
+      "title": "Keep it signed",
+      "text": "When an update replaces a kernel or the bootloader, the new file has no signature of yours and the computer would not start with Secure Boot on. This signs them for you after every update.",
+      "note": "A copy of your key is kept in a folder that only the administrator can read.",
+      "on": "Automatic signing is on",
+      "off": "Automatic signing is off",
+      "enable": "Turn on",
+      "disable": "Turn off"
+    },
+    "status": {
+      "title": "Where things stand",
+      "secureBoot": "Secure Boot",
+      "yourKey": "Your key",
+      "dkmsKey": "Key of the drivers",
+      "firmwareKeys": "Keys the firmware trusts",
+      "none": "Not created",
+      "missing": "Missing",
+      "trusted": "Active: the firmware trusts it",
+      "waiting": "Waiting for the restart",
+      "notTrusted": "The firmware does not trust it yet",
+      "keyCount": "{count} keys",
+      "show": "Show",
+      "hide": "Hide",
+      "notListed": "The list could not be read",
+      "mine": "Your key",
+      "drivers": "Drivers"
+    },
+    "system": {
+      "title": "Your computer",
+      "computer": "Computer",
+      "firmware": "Firmware",
+      "bootMode": "Boot mode",
+      "uefi": "UEFI",
+      "legacy": "Legacy BIOS",
+      "setupMode": "Firmware keys",
+      "setupOpen": "Open: keys can be added without a signature (setup mode)",
+      "setupProtected": "Protected: changes need a signature (user mode)",
+      "tpm": "TPM",
+      "tpmYes": "Present",
+      "tpmNo": "Not found",
+      "bootloader": "Bootloader",
+      "entry": "Firmware entry"
+    },
+    "loaders": {
+      "grub": "Starts through shim. Shim trusts the key of Debian and, once enrolled, your key (MOK).",
+      "systemdBoot": "Needs shim in front to use your key (MOK). Started directly, only the database of the firmware can trust it.",
+      "limine": "Does not use shim: the firmware has to trust your certificate in its own database, and Limine checks the rest by hash.",
+      "payloadsTitle": "Kernels and images on the boot partition",
+      "noPayloads": "No kernels were found on the boot partition. systemd-boot loads them from there.",
+      "shimNote": "If the firmware starts systemd-boot directly, your key has to be in the database of the firmware instead of in shim."
+    },
+    "limine": {
+      "title": "Limine hardening",
+      "text": "Limine checks every file it loads by its hash, but only when the hash of its configuration is enrolled in its own binary. This works out the hashes, enrolls the configuration in a clean copy of Limine and signs it. Repeat it after each change of kernels or configuration; with automatic signing on, it is done for you.",
+      "noConfig": "No limine.conf was found.",
+      "hashes": "{matching} of {total} files have the right hash",
+      "unresolved": "{count} files could not be found",
+      "enrolled": "The configuration is enrolled",
+      "notEnrolled": "The configuration is not enrolled",
+      "needTool": "The limine tool is not installed.",
+      "refresh": "Update the hashes and enroll the configuration",
+      "certTitle": "Your certificate in the firmware",
+      "certText": "Limine does not use shim, so the firmware has to trust your certificate in its own database. Copy it to the boot partition and add it from the firmware settings, usually under Secure Boot, Key Management, db, Append or Enroll.",
+      "exportCert": "Copy my certificate to the boot partition",
+      "exported": "Copied to {path}"
+    },
+    "signer": { "debian": "Signed by Debian", "own": "Signed with your key", "microsoft": "Signed by Microsoft", "other": "Signed by someone else", "none": "Not signed" },
+    "chain": {
+      "title": "Would this computer start with Secure Boot on?",
+      "shim": "shim is next to the bootloader",
+      "loader": "The bootloader is signed by Debian or with your key",
+      "kernels": "Every kernel is signed by Debian or with your key",
+      "autoSign": "Updates are signed automatically",
+      "autoSignOff": "Updates are not signed automatically: turn it on in the signing step",
+      "payloads": "The kernels and images on the boot partition are trusted",
+      "db": "The firmware trusts your certificate in its own database",
+      "enrolled": "The configuration is enrolled in Limine",
+      "hashes": "Every file of limine.conf has the right hash",
+      "kernelsDetail": "{count} of {total} kernels would not start",
+      "yes": "Yes: everything in the chain is trusted.",
+      "no": "Not yet: something in the chain would stop it. Fix what is marked above before turning Secure Boot on."
+    },
+    "check": {
+      "intro": "Secure Boot is a feature of the firmware that only lets signed software start. The kernels you build, or get from outside, are not signed by anyone the firmware trusts. This guide creates your own key, tells the firmware to trust it and signs your kernels with it. The first steps are done only once.",
+      "tools": "Tools (mokutil, openssl, sbsigntool)",
+      "toolsOk": "Installed",
+      "toolsMissing": "Missing",
+      "legacy": "This computer starts in legacy BIOS mode, where Secure Boot does not exist. You can ignore this guide.",
+      "install": "Install the missing tools"
+    },
+    "key": {
+      "text": "The key has two halves. The private half signs your kernels and never leaves this computer. The public half is the one you give to the firmware.",
+      "created": "Your key is ready.",
+      "create": "Create key",
+      "needTools": "Install the tools in the first step before."
+    },
+    "enroll": {
+      "text": "The firmware has to be told to trust your key. You invent a password now and type it once, on a blue screen, when the computer restarts. This is done only once.",
+      "done": "The firmware already trusts your key.",
+      "pendingTitle": "The key is waiting for the restart. When the computer starts again:",
+      "blue1": "On the blue screen choose Enroll MOK.",
+      "blue2": "Choose Continue, then Yes.",
+      "blue3": "Type the password you invented.",
+      "blue4": "Choose Reboot.",
+      "password": "Invent a password of at least 8 characters. You need it once, at the restart.",
+      "register": "Register the key"
+    },
+    "dkms": {
+      "text": "Drivers that are built for each kernel, like the one of NVIDIA, are signed with a key of their own. The firmware has to trust it too, or they will not load with Secure Boot on.",
+      "done": "The firmware already trusts the key of the drivers.",
+      "missing": "There are driver modules, but their signing key is missing. Reinstall the driver from Soplos Welcome to create it.",
+      "sameScreen": "It appears on the same blue screen as your key."
+    },
+    "sign": {
+      "text": "A kernel has to be signed to start with Secure Boot on. The kernels you build here can be signed as part of the build. The ones that come from elsewhere, like XanMod or Liquorix, are signed here. The bootloader is signed too.",
+      "none": "No kernels found.",
+      "bootloaderTitle": "Bootloader",
+      "bootloaderText": "The bootloader starts the kernel, so the firmware has to trust it too. The one of Debian comes signed by Debian.",
+      "needTools": "Install the tools in the first step to see who signed each file.",
+      "noBootloader": "No bootloader was found on the boot partition.",
+      "signLoader": "Sign what is not trusted yet",
+      "version": "version {version}",
+      "startedFrom": "started this computer",
+      "shimMissing": "shim not found",
+      "kernelsTitle": "Kernels",
+      "sign": "Sign",
+      "all": "Sign all",
+      "build": "You can also sign a kernel when you build it.",
+      "goBuild": "Go to Build"
+    },
+    "enable": {
+      "text": "The last step is done in the firmware, not in this program.",
+      "step1": "Restart and open the firmware settings. Usually by pressing Del, F2, F10 or Esc while the computer starts.",
+      "step2": "Find the Secure Boot option, usually in the Security or Boot menu.",
+      "step3": "Set it to Enabled, save and exit.",
+      "isOn": "Secure Boot is on",
+      "isOff": "Secure Boot is off"
+    },
+    "password": {
+      "first": "Password",
+      "second": "Repeat the password",
+      "tooShort": "The password needs at least 8 characters.",
+      "mismatch": "The passwords do not match."
+    },
+    "advanced": {
+      "title": "Advanced",
+      "delete": "Remove my key",
+      "deleteText": "Queues the removal of your key from the firmware and deletes it from this computer. The kernels signed with it will no longer start with Secure Boot on.",
+      "deleteTitle": "Remove your key?",
+      "deleteEnrolled": "The firmware trusts this key. It is queued for removal at the next restart, and you need a password to confirm it on the blue screen.",
+      "deleteLocal": "The key never reached the firmware, so only its files on this computer are deleted.",
+      "reset": "Reset the key database",
+      "resetText": "Queues the removal of every key enrolled by hand, not only yours. Useful to clean old keys.",
+      "resetTitle": "Reset the key database?",
+      "resetConfirm": "Every key enrolled by hand is removed at the next restart, and you will have to enroll yours again. You need a password to confirm it on the blue screen."
+    },
+    "errors": {
+      "tools": "The tools could not be installed",
+      "key": "The key could not be created",
+      "enroll": "The key could not be registered",
+      "sign": "The kernel could not be signed",
+      "delete": "The key could not be removed",
+      "reset": "The key database could not be reset",
+      "limine": "The configuration of Limine could not be updated",
+      "cert": "The certificate could not be copied",
+      "auto": "Automatic signing could not be changed",
+      "restart": "The computer could not be restarted"
+    }
+  },
+  "batch": {
+    "description": "Build several kernels one after another.",
+    "version": "Kernel version",
+    "dest": "Destination folder",
+    "destHint": "The packages are saved in <folder>/<version>/V<level>/.",
+    "destRelative": "The destination has to be a full path, like /home/you/kernels.",
+    "choose": "Choose...",
+    "chooseTitle": "Choose the destination folder",
+    "revision": "Revision",
+    "revisionHint": "0 is a kernel version never built before. Raise it only when recompiling the same version with different patches (1 is the first recompile), so that apt sees a real upgrade.",
+    "cores": "Cores",
+    "resume": "Resume: skip the kernels already built in the destination",
+    "kernels": "Kernels",
+    "selectAll": "Select all",
+    "selectNone": "Select none",
+    "selectedCount": "{n} of {total} selected",
+    "built": "built",
+    "start": "Build {n} kernels",
+    "allBuilt": "Every selected kernel is already built in the destination.",
+    "confirmTitle": "Build the whole release?",
+    "confirmText": "{n} kernels of version {version} are built one after another and saved in {dest}. The sources are made again for every kernel.",
+    "running": "Building {index} of {total}",
+    "finished": "Finished: {names}",
+    "cancel": "Cancel the queue",
+    "cancelTitle": "Cancel the queue?",
+    "cancelText": "The build in course is stopped and the queue ends. What was finished stays in the destination.",
+    "keepGoing": "Keep building",
+    "showLog": "Show details",
+    "hideLog": "Hide details",
+    "busy": "Another build is in course. Wait for it to end.",
+    "doneTitle": "All the kernels were built",
+    "doneText": "{n} kernels were saved in {dest}.",
+    "failedTitle": "A build failed",
+    "failedText": "{n} kernels were finished before it. The sources and the log of the one that failed are kept in {folder}.",
+    "cancelledTitle": "The queue was cancelled",
+    "cancelledText": "{n} kernels were finished before.",
+    "again": "New queue"
+  }
+}
