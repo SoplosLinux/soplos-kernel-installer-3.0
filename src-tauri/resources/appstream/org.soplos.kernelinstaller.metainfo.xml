@@ -114,6 +114,57 @@
 
   <launchable type="desktop-id">soplos-kernel-installer.desktop</launchable>
 
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/SoplosLinux/soplos-kernel-installer-3.0/main/src-tauri/resources/screenshots/screenshot01.png</image>
+      <caption>Build assistant: choose what you will use the computer for</caption>
+      <caption xml:lang="en">Build assistant: choose what you will use the computer for</caption>
+      <caption xml:lang="es">Asistente de compilación: elige para qué usarás el equipo</caption>
+      <caption xml:lang="fr">Assistant de compilation : choisissez l'usage de l'ordinateur</caption>
+      <caption xml:lang="de">Kompilierassistent: Wählen Sie den Verwendungszweck des Computers</caption>
+      <caption xml:lang="pt">Assistente de compilação: escolha para que vai usar o computador</caption>
+      <caption xml:lang="it">Assistente di compilazione: scegli a cosa userai il computer</caption>
+      <caption xml:lang="ro">Asistent de compilare: alege pentru ce vei folosi calculatorul</caption>
+      <caption xml:lang="ru">Мастер сборки: выберите, для чего вы будете использовать компьютер</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/SoplosLinux/soplos-kernel-installer-3.0/main/src-tauri/resources/screenshots/screenshot02.png</image>
+      <caption>Ready-made kernels of Soplos, Debian, XanMod and Liquorix</caption>
+      <caption xml:lang="en">Ready-made kernels of Soplos, Debian, XanMod and Liquorix</caption>
+      <caption xml:lang="es">Kernels ya hechos de Soplos, Debian, XanMod y Liquorix</caption>
+      <caption xml:lang="fr">Noyaux prêts à l'emploi de Soplos, Debian, XanMod et Liquorix</caption>
+      <caption xml:lang="de">Fertige Kernel von Soplos, Debian, XanMod und Liquorix</caption>
+      <caption xml:lang="pt">Kernels prontos de Soplos, Debian, XanMod e Liquorix</caption>
+      <caption xml:lang="it">Kernel già pronti di Soplos, Debian, XanMod e Liquorix</caption>
+      <caption xml:lang="ro">Kernele gata făcute de la Soplos, Debian, XanMod și Liquorix</caption>
+      <caption xml:lang="ru">Готовые ядра Soplos, Debian, XanMod и Liquorix</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/SoplosLinux/soplos-kernel-installer-3.0/main/src-tauri/resources/screenshots/screenshot03.png</image>
+      <caption>The kernels installed on this computer</caption>
+      <caption xml:lang="en">The kernels installed on this computer</caption>
+      <caption xml:lang="es">Los kernels instalados en este equipo</caption>
+      <caption xml:lang="fr">Les noyaux installés sur cet ordinateur</caption>
+      <caption xml:lang="de">Die auf diesem Computer installierten Kernel</caption>
+      <caption xml:lang="pt">Os kernels instalados neste computador</caption>
+      <caption xml:lang="it">I kernel installati su questo computer</caption>
+      <caption xml:lang="ro">Kernelele instalate pe acest calculator</caption>
+      <caption xml:lang="ru">Ядра, установленные на этом компьютере</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/SoplosLinux/soplos-kernel-installer-3.0/main/src-tauri/resources/screenshots/screenshot04.png</image>
+      <caption>Secure Boot guide, step by step</caption>
+      <caption xml:lang="en">Secure Boot guide, step by step</caption>
+      <caption xml:lang="es">Guía de Secure Boot, paso a paso</caption>
+      <caption xml:lang="fr">Guide Secure Boot, pas à pas</caption>
+      <caption xml:lang="de">Secure-Boot-Anleitung, Schritt für Schritt</caption>
+      <caption xml:lang="pt">Guia do Secure Boot, passo a passo</caption>
+      <caption xml:lang="it">Guida a Secure Boot, passo dopo passo</caption>
+      <caption xml:lang="ro">Ghid Secure Boot, pas cu pas</caption>
+      <caption xml:lang="ru">Руководство по Secure Boot, шаг за шагом</caption>
+    </screenshot>
+  </screenshots>
+
   <provides>
     <binary>soplos-kernel-installer</binary>
   </provides>
@@ -129,6 +180,11 @@
   </developer>
 
   <releases>
+    <release version="3.0.0-1-beta" date="2026-11-07">
+      <description>
+        <p>Installing or updating a kernel of Soplos from the repository, and installing or updating this package, leaves the sources of the NVIDIA driver patched, as the 2.x program did, so the kernels that arrive later from a terminal build the module. Screenshots of the Build, Kernels, Installed and Secure Boot pages.</p>
+      </description>
+    </release>
     <release version="3.0.0-beta" date="2026-11-06">
       <description>
         <p>First beta of the rewrite of Soplos Kernel Installer, from Python 3 and GTK3 to Tauri 2 with a Rust backend and a Svelte frontend. It has not yet been tested with a complete build on real hardware.</p>

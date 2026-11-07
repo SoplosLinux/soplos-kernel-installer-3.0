@@ -15,6 +15,12 @@ fn main() {
         std::process::exit(soplos_kernel_installer_lib::sign_boot());
     }
 
+    // What the package runs after it is installed or updated, as root and
+    // without a window: patches the sources of the NVIDIA driver.
+    if args.len() == 2 && args[1] == "--patch-nvidia" {
+        std::process::exit(soplos_kernel_installer_lib::patch_nvidia_after_install());
+    }
+
     // WebKitGTK's DMA-BUF renderer causes protocol errors (Error 71) on Wayland
     // with NVIDIA/Nouveau drivers on physical hardware, as well as blank windows
     // on virtual GPUs. Force it disabled by default on all hardware.

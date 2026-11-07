@@ -1,0 +1,12 @@
+#!/bin/sh
+# When the package is installed or updated, the sources of the NVIDIA driver
+# are left patched, as the program does when it installs a kernel. The kernels
+# that arrive later from a terminal then build the module with no help.
+# It never makes the installation fail.
+set -e
+
+if [ "$1" = "configure" ]; then
+    /usr/bin/soplos-kernel-installer --patch-nvidia || true
+fi
+
+exit 0

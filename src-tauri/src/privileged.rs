@@ -364,6 +364,8 @@ pub fn version_cmp(a: &str, b: &str) -> std::cmp::Ordering {
 fn install_kernel(package: &str) -> Result<(), String> {
     println!("Installing {package}");
     flush();
+    // As the 2.x program did: the NVIDIA sources are patched before apt builds the module.
+    crate::build::install::patch_nvidia_sources();
     run(Command::new("apt-get").args(["install", "-y", package]), "apt-get install")
 }
 
@@ -382,6 +384,8 @@ fn upgrade_kernel(package: &str) -> Result<(), String> {
     println!("Updating {package}");
     flush();
     let suffix = package_suffix(package)?;
+    // As the 2.x program did: the NVIDIA sources are patched before apt builds the module.
+    crate::build::install::patch_nvidia_sources();
     run(Command::new("apt-get").args(["install", "-y", "--only-upgrade", package]), "apt-get upgrade")?;
     // Purge the older images and headers of this kernel: all but the newest,
     // and never the one that is running.

@@ -11,6 +11,7 @@ mod system_theme;
 
 pub use privileged::run_ops_file;
 pub use secure_boot_ops::sign_boot;
+pub use build::install::patch_nvidia_after_install;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {

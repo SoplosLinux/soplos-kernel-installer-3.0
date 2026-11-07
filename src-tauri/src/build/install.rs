@@ -81,21 +81,44 @@ fn packages_of(release: &str, uid: u32) -> Result<Vec<PathBuf>, String> {
     Ok(debs)
 }
 
+/// Patches the sources of the NVIDIA driver, when the computer has one, before
+/// apt builds the module for a new kernel. The patches stay in /usr/src, so the
+/// updates that are made later from a terminal build the module too. They skip
+/// what is already patched.
+pub fn patch_nvidia_sources() {
+    if !nvidia::has_nvidia_gpu() {
+        return;
+    }
+    say("Patching the NVIDIA driver for this kernel");
+    let status = env(Command::new("sh").arg("-c").arg(nvidia::nvidia_dkms_patch_commands())).stdin(Stdio::null()).status();
+    if !matches!(status, Ok(s) if s.success()) {
+        say("The patches of the NVIDIA driver did not finish: the module may not build");
+    }
+}
+
+/// What the package runs after it is installed or updated, as root and without a
+/// window: it leaves the sources of the NVIDIA driver patched with the patches
+/// this version carries, so the kernels that arrive later from a terminal build
+/// the module too. Always returns 0 (but 2 when it is not root) so the
+/// installation of the package goes on.
+pub fn patch_nvidia_after_install() -> i32 {
+    use std::os::unix::fs::MetadataExt;
+    let is_root = fs::metadata("/proc/self").map(|m| m.uid() == 0).unwrap_or(false);
+    if !is_root {
+        eprintln!("This mode is only for root");
+        return 2;
+    }
+    patch_nvidia_sources();
+    0
+}
+
 /// Installs the packages of a built kernel. `rt` says it is a real-time kernel,
 /// which NVIDIA needs to be told about.
 pub fn install_built_kernel(release: &str, rt: bool, sign: bool, uid: u32) -> Result<(), String> {
     let debs = packages_of(release, uid)?;
     let nvidia_gpu = nvidia::has_nvidia_gpu();
 
-    // The sources of the NVIDIA driver are patched before apt builds the module
-    // for the new kernel. The patches skip what is already patched.
-    if nvidia_gpu {
-        say("Patching the NVIDIA driver for this kernel");
-        let status = env(Command::new("sh").arg("-c").arg(nvidia::nvidia_dkms_patch_commands())).stdin(Stdio::null()).status();
-        if !matches!(status, Ok(s) if s.success()) {
-            say("The patches of the NVIDIA driver did not finish: the module may not build");
-        }
-    }
+    patch_nvidia_sources();
 
     let mut install = Command::new("apt-get");
     install.args(["install", "-y", "--allow-downgrades", "--allow-change-held-packages"]).args(&debs);

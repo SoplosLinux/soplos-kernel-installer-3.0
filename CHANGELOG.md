@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.0.0-1-beta] - 2026-11-07
+
+### Fixed
+- Installing or updating a kernel of Soplos from the Kernels page did not patch the sources of the NVIDIA driver, as the 2.x program did. The module could fail to build, and the patches did not stay in `/usr/src` for the kernels that arrive later from a terminal. The patches are applied before `apt-get install` and before `apt-get install --only-upgrade`, when the computer has an NVIDIA graphics card.
+
+### Added
+- The package patches the sources of the NVIDIA driver when it is installed or updated (`postinst`, which runs `soplos-kernel-installer --patch-nvidia` as root and never makes the installation fail).
+- Four screenshots of the program, in English, in `src-tauri/resources/screenshots/` and in the README: Build, Kernels, Installed and Secure Boot.
+
 ## [3.0.0-beta] - 2026-11-06
 
 First beta, for the development team. Everything of the alpha is there: the pages Build, Kernels, Installed, Secure Boot and Batch. It has not yet been tested with a complete kernel build on real hardware, nor with Secure Boot on a real firmware: report anything that fails.
