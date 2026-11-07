@@ -180,6 +180,11 @@
   </developer>
 
   <releases>
+    <release version="3.0.0-2-beta" date="2026-11-07">
+      <description>
+        <p>On a computer with an NVIDIA graphics card, the package installs a kernel hook that downloads the latest patches of the nvidia-patches project and applies them to the NVIDIA driver sources before DKMS builds the module, so the kernels that arrive from a terminal build it too.</p>
+      </description>
+    </release>
     <release version="3.0.0-1-beta" date="2026-11-07">
       <description>
         <p>Installing or updating a kernel of Soplos from the repository, and installing or updating this package, leaves the sources of the NVIDIA driver patched, as the 2.x program did, so the kernels that arrive later from a terminal build the module. Screenshots of the Build, Kernels, Installed and Secure Boot pages.</p>

@@ -1,6 +1,6 @@
 # Soplos Kernel Installer 3.0
 
-![Version](https://img.shields.io/badge/version-3.0.0--1--beta-blue)
+![Version](https://img.shields.io/badge/version-3.0.0--2--beta-blue)
 ![License](https://img.shields.io/badge/license-GPL--3.0--or--later-green)
 ![Platform](https://img.shields.io/badge/platform-Linux-lightgrey)
 ![Tauri](https://img.shields.io/badge/Tauri-2-orange)
@@ -26,7 +26,7 @@ This is a beta of the rewrite of the 2.x program (Python 3 and GTK3), for the de
 - **Installed**: the kernels in `/boot`, with their profile, patches and date. It removes the ones that are not running, and offers to revoke the key of Secure Boot when nothing is signed with it any more.
 - **Secure Boot**: a step by step guide. It shows the computer and the bootloader it detects, creates a key, makes the firmware trust it, signs kernels and bootloaders, keeps them signed after every update, and checks the whole chain before Secure Boot is turned on. GRUB and systemd-boot go through shim and the key of the user (MOK); Limine goes through the database of the firmware, with the hash of its configuration enrolled.
 - **Batch** (hidden, Ctrl+Shift+D): builds a whole release of Soplos kernels one after another, 18 in all, into a folder that is chosen, each with its metapackage.
-- **NVIDIA**: the driver sources that DKMS builds are patched for the new kernel before it is installed, and the result for its module is reported at the end. This is also done when a kernel of Soplos is installed or updated from the repository, and when this package is installed or updated, so the kernels that arrive later from a terminal build the module.
+- **NVIDIA**: the driver sources that DKMS builds are patched for the new kernel before it is installed, and the result for its module is reported at the end. This is also done when a kernel of Soplos is installed or updated from the repository, and when this package is installed or updated, so the kernels that arrive later from a terminal build the module. On a computer with an NVIDIA graphics card, the package also installs a kernel hook that downloads the latest patches of the nvidia-patches project and applies them before DKMS builds the module.
 - **Rust**: part of every kernel that has the Rust Binder (6.18 and newer), which is the only Binder built, for Waydroid. Older kernels are built without Binder and without Rust, and the program says so.
 - **Light and dark theme** that follows the desktop, and a window with no frame of the system.
 - **Eight languages**: English, Spanish, German, French, Italian, Portuguese, Romanian and Russian.

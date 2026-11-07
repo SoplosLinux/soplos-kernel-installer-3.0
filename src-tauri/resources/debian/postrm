@@ -7,6 +7,14 @@ case "$1" in
     remove|purge)
         rm -f /etc/apt/apt.conf.d/99soplos-kernel-installer-sign
         rm -rf /var/lib/soplos-kernel-installer
+        # The kernel hook of the nvidia-patches project, unless Soplos Welcome,
+        # which puts the same one in place, is still installed.
+        if ! dpkg-query -W -f='${db:Status-Abbrev}' soplos-welcome 2>/dev/null | grep -q '^ii'; then
+            rm -f /etc/kernel/postinst.d/00-soplos-nvidia-patches \
+                  /etc/kernel/header_postinst.d/00-soplos-nvidia-patches
+            rm -rf /var/lib/soplos-nvidia-patches
+            rm -f /var/log/soplos-nvidia-patches.log
+        fi
         ;;
 esac
 
