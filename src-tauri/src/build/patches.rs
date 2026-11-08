@@ -340,41 +340,80 @@ fn order(ids: &[String]) -> Vec<String> {
     out
 }
 
-fn apply_one(source: &Path, patch: &Path) -> bool {
-    let ok = run_capture({
-        let mut c = Command::new("patch");
-        c.args(["-p1", "--batch", "--forward", "-i"]).arg(patch).current_dir(source);
-        c
-    })
-    .0 == 0;
-    if ok {
-        return true;
-    }
-    // One that is already there is not a failure. GNU patch says "Reversed (or
-    // previously applied) patch detected": the 2.x program looked for the words
-    // "already applied", which it never prints.
-    let (_, text) = run_capture({
-        let mut c = Command::new("patch");
-        c.args(["-p1", "--batch", "--forward", "--dry-run", "-i"]).arg(patch).current_dir(source);
-        c
-    });
-    let text = text.to_lowercase();
-    text.contains("previously applied") || text.contains("already applied")
+enum Outcome {
+    Applied,
+    /// Every hunk of it is in the tree already.
+    Already,
+    Failed,
 }
 
+fn patch_run(source: &Path, patch: &Path, extra: &[&str]) -> i32 {
+    run_capture({
+        let mut c = Command::new("patch");
+        c.args(["-p1", "--batch"]).args(extra).arg("-i").arg(patch).current_dir(source);
+        c
+    })
+    .0
+}
+
+/// One patch, whole or not at all. It is tried with --dry-run first, and only a
+/// patch that fits entirely is applied: GNU patch would otherwise apply the hunks
+/// that fit and leave the rest in a .rej file, a file with some of its changes.
+/// A patch whose hunks are all in the tree already is not a failure, but one that
+/// has only some of them is.
+fn apply_whole(source: &Path, patch: &Path) -> Outcome {
+    if applies(source, patch) {
+        return if patch_run(source, patch, &["--forward"]) == 0 { Outcome::Applied } else { Outcome::Failed };
+    }
+    // Taking it out would work only if all of it is there.
+    if patch_run(source, patch, &["-R", "--dry-run"]) == 0 {
+        Outcome::Already
+    } else {
+        Outcome::Failed
+    }
+}
+
+/// Takes out, last first, the patches this call applied. False when one of them
+/// would not come out.
+fn roll_back(source: &Path, done: &[PathBuf]) -> bool {
+    done.iter().rev().all(|file| patch_run(source, file, &["-R"]) == 0)
+}
+
+/// Applies the patches of the recipe: all of them or none. If one does not apply,
+/// or the build is cancelled half way, the ones that were applied come out again
+/// and the tree is as it was; if they cannot come out, the tree is deleted, so a
+/// source with some of the patches is never built or reused.
 pub fn apply(source: &Path, sets: &[PatchSet], cancel: &AtomicBool, emit: &mut dyn FnMut(Level, &str)) -> Result<(), String> {
     let ids: Vec<String> = sets.iter().map(|(id, _)| id.clone()).collect();
-    for id in order(&ids) {
+    let mut done: Vec<PathBuf> = Vec::new();
+    let mut failure: Option<String> = None;
+    'queue: for id in order(&ids) {
         if cancel.load(Ordering::Relaxed) {
-            return Err("cancelled".to_string());
+            failure = Some("cancelled".to_string());
+            break;
         }
         emit(Level::Info, &format!("Applying the {id} patch"));
         let Some((_, files)) = sets.iter().find(|(i, _)| *i == id) else { continue };
         for file in files {
-            if !apply_one(source, file) {
-                return Err(format!("The {id} patch did not apply ({})", file.display()));
+            match apply_whole(source, file) {
+                Outcome::Applied => done.push(file.clone()),
+                Outcome::Already => {}
+                Outcome::Failed => {
+                    failure = Some(format!("The {id} patch did not apply ({})", file.display()));
+                    break 'queue;
+                }
             }
         }
+    }
+    if let Some(reason) = failure {
+        if !done.is_empty() {
+            emit(Level::Warn, "Taking out the patches that were applied: they are all applied or none is");
+            if !roll_back(source, &done) {
+                emit(Level::Warn, "They did not come out: the sources are deleted, so a half patched kernel is never built");
+                let _ = fs::remove_dir_all(source);
+            }
+        }
+        return Err(if reason == "cancelled" { reason } else { format!("{reason}. No patch was left applied") });
     }
     let _ = fs::write(source.join(".applied_patches"), ids.join("\n"));
     Ok(())
@@ -452,6 +491,30 @@ mod tests {
         assert_eq!(applied(&dir), vec!["bore"]);
         // Applying it again is not a failure.
         apply(&dir, &sets, &cancel, &mut |_, _| {}).unwrap();
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn the_patches_are_all_applied_or_none_is() {
+        let dir = std::env::temp_dir().join(format!("ki-patch-all-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir).unwrap();
+        fs::write(dir.join("a.txt"), "one\ntwo\n").unwrap();
+        fs::write(dir.join("b.txt"), "x\ny\n").unwrap();
+        // The first fits, the second has one hunk that fits and one that does not.
+        let good = dir.join("good.patch");
+        fs::write(&good, "--- a/a.txt\n+++ b/a.txt\n@@ -1,2 +1,3 @@\n one\n two\n+three\n").unwrap();
+        let half = dir.join("half.patch");
+        fs::write(&half, "--- a/b.txt\n+++ b/b.txt\n@@ -1,2 +1,3 @@\n x\n y\n+z\n@@ -40,2 +41,3 @@\n nothing\n like\n+this\n").unwrap();
+        let cancel = AtomicBool::new(false);
+        let sets = vec![("bore".to_string(), vec![good.clone()]), ("zen".to_string(), vec![half.clone()])];
+        let err = apply(&dir, &sets, &cancel, &mut |_, _| {}).unwrap_err();
+        assert!(err.contains("No patch was left applied"), "{err}");
+        // Nothing was left: not the first one, and not the hunk of the second that fit.
+        assert_eq!(fs::read_to_string(dir.join("a.txt")).unwrap(), "one\ntwo\n");
+        assert_eq!(fs::read_to_string(dir.join("b.txt")).unwrap(), "x\ny\n");
+        assert!(!dir.join(".applied_patches").exists());
+        assert!(!dir.join("b.txt.rej").exists());
         let _ = fs::remove_dir_all(&dir);
     }
 }

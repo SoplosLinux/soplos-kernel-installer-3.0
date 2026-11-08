@@ -420,8 +420,12 @@
     "keep": "Conserver le dossier",
     "delete": "Supprimer le dossier"
   },
+  "times": {
+    "title": "Le temps de compilation de chaque noyau"
+  },
   "stats": {
     "time": "Temps",
+    "kernel": "Ce noyau",
     "cpu": "CPU",
     "load": "Charge : {a} · {b} · {c} (1, 5, 15 min)",
     "memory": "Mémoire",

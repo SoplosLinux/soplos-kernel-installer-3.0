@@ -420,8 +420,12 @@
     "keep": "Păstrează dosarul",
     "delete": "Șterge dosarul"
   },
+  "times": {
+    "title": "Cât a durat compilarea fiecărui kernel"
+  },
   "stats": {
     "time": "Timp",
+    "kernel": "Acest kernel",
     "cpu": "CPU",
     "load": "Încărcare: {a} · {b} · {c} (1, 5, 15 min)",
     "memory": "Memorie",

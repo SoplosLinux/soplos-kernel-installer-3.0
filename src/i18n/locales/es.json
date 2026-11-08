@@ -420,8 +420,12 @@
     "keep": "Conservar la carpeta",
     "delete": "Borrar la carpeta"
   },
+  "times": {
+    "title": "Lo que tardó en compilarse cada kernel"
+  },
   "stats": {
     "time": "Tiempo",
+    "kernel": "Este kernel",
     "cpu": "CPU",
     "load": "Carga: {a} · {b} · {c} (1, 5, 15 min)",
     "memory": "Memoria",

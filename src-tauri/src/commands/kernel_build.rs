@@ -136,6 +136,15 @@ pub fn clean_build_files(version: String) -> Result<u64, String> {
     pipeline::clean_files(&version)
 }
 
+/// How long the kernels took to build, the newest first.
+#[tauri::command(async)]
+pub fn get_build_times() -> Vec<crate::build::times::BuildTime> {
+    let mut all = crate::build::times::load();
+    all.reverse();
+    all.truncate(100);
+    all
+}
+
 /// Deletes the folder of the builds (`~/kernel_build`) after a build was
 /// cancelled. Returns what it freed.
 #[tauri::command(async)]

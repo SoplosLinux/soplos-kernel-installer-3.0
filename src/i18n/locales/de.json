@@ -420,8 +420,12 @@
     "keep": "Ordner behalten",
     "delete": "Ordner löschen"
   },
+  "times": {
+    "title": "Wie lange jeder Kernel zum Bauen brauchte"
+  },
   "stats": {
     "time": "Zeit",
+    "kernel": "Dieser Kernel",
     "cpu": "CPU",
     "load": "Last: {a} · {b} · {c} (1, 5, 15 Min.)",
     "memory": "Speicher",

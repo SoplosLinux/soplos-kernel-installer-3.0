@@ -52,6 +52,10 @@ pub struct BatchProgress {
     pub total: u32,
     pub name: String,
     pub completed: Vec<String>,
+    /// How long each of the finished kernels took, in seconds, in the same order.
+    pub timings: Vec<u64>,
+    /// When the kernel being built started, in milliseconds since 1970.
+    pub started_at: u64,
     pub dest: String,
     /// The folder with the sources and the log of the kernel that failed.
     pub failed: Option<String>,
@@ -438,8 +442,16 @@ pub(crate) fn ensure_deps(ctx: &Ctx) -> Result<(), String> {
     Ok(())
 }
 
-/// From the download to the compiled packages. Returns the release.
+/// From the download to the compiled packages. Returns the release. How long it
+/// took goes to the history of times, when the kernel was built whole.
 pub(crate) fn build_kernel(ctx: &Ctx, recipe: &Recipe, opts: &Options) -> Result<String, String> {
+    let started = std::time::Instant::now();
+    let release = build_kernel_inner(ctx, recipe, opts)?;
+    super::times::record(&recipe.name, &recipe.version, started.elapsed().as_secs(), recipe.cores);
+    Ok(release)
+}
+
+fn build_kernel_inner(ctx: &Ctx, recipe: &Recipe, opts: &Options) -> Result<String, String> {
     recipe.validate()?;
     let builds = build_dir();
     fs::create_dir_all(&builds).map_err(|e| format!("{}: {e}", builds.display()))?;

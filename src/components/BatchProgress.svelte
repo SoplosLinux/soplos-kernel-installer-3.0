@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { afterUpdate, beforeUpdate } from "svelte";
+  import { afterUpdate, beforeUpdate, onDestroy, onMount } from "svelte";
   import { _ } from "svelte-i18n";
   import BuildStats from "./BuildStats.svelte";
   import CancelDialog from "./CancelDialog.svelte";
   import { cancelBuild, job } from "../lib/build";
   import { fitToWindow } from "../lib/fit";
+  import { duration } from "../lib/time";
 
   // The follow-up of a batch of kernels that is being built: where it is, the
   // stage of the build in course, everything the build says and what is already
@@ -28,7 +29,15 @@
     await cancelBuild(deleteFolder);
   }
 
+  // How long the kernel in course has been building, and the ones that are done.
+  let now = Date.now();
+  let clock: ReturnType<typeof setInterval> | undefined;
+  onMount(() => (clock = setInterval(() => (now = Date.now()), 1000)));
+  onDestroy(() => clearInterval(clock));
+
   $: batch = $job.batch;
+  $: kernelTime = batch && batch.startedAt ? duration((now - batch.startedAt) / 1000) : "";
+  $: finished = batch ? batch.completed.map((name, i) => `${name} (${duration(batch.timings[i] ?? 0)})`).join(", ") : "";
   $: last = $job.lines[$job.lines.length - 1] ?? "";
 
   const secondary = "px-4 py-2 rounded border border-border text-[0.85rem] text-text-bright hover:bg-surface-2 disabled:opacity-40";
@@ -41,14 +50,14 @@
     </h3>
     <p class="text-[0.9rem] text-primary mb-1">{batch.name}</p>
     <p class="text-[0.8rem] text-text-muted mb-2">
-      {#if $job.stage}{$_(`build.progress.stages.${$job.stage}`)} · {Math.round($job.percent)}%{/if}
+      {#if $job.stage}{$_(`build.progress.stages.${$job.stage}`)} · {Math.round($job.percent)}% · {/if}{$_("stats.kernel")}: <span class="font-mono text-text-bright">{kernelTime}</span>
     </p>
     <div class="h-1.5 rounded bg-surface-2 overflow-hidden mb-3">
       <div class="h-full bg-primary transition-[width]" style="width: {Math.max(0, Math.min(100, $job.percent))}%"></div>
     </div>
     <p class="text-[0.8rem] text-text-muted truncate mb-3" title={last}>{last}</p>
     {#if batch.completed.length > 0}
-      <p class="text-[0.78rem] text-text-muted mb-3 break-words">{$_("batch.finished", { values: { names: batch.completed.join(", ") } })}</p>
+      <p class="text-[0.78rem] text-text-muted mb-3 break-words">{$_("batch.finished", { values: { names: finished } })}</p>
     {/if}
     <BuildStats />
     <div class="flex items-center gap-3">

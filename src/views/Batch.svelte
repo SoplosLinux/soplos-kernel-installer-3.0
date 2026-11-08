@@ -3,10 +3,12 @@
   import { _ } from "svelte-i18n";
   import { open } from "@tauri-apps/plugin-dialog";
   import BatchProgress from "../components/BatchProgress.svelte";
+  import BuildTimes from "../components/BuildTimes.svelte";
   import Modal from "../components/Modal.svelte";
   import NumberField from "../components/NumberField.svelte";
   import { api } from "../lib/api";
   import { building, job } from "../lib/build";
+  import { duration } from "../lib/time";
   import { progress } from "../lib/progress";
 
   interface KernelVersion {
@@ -132,6 +134,10 @@
     job.update((j) => (!j.running && j.batch !== null && j.result !== null ? { ...j, result: null, error: null, batch: null } : j));
   });
 
+  // How long the queue took, and each kernel of it.
+  $: queueTime = $job.batch ? $job.batch.timings.reduce((a, b) => a + b, 0) : 0;
+  $: queueTimes = $job.batch ? $job.batch.completed.map((name, i) => `${name} (${duration($job.batch?.timings[i] ?? 0)})`).join(", ") : "";
+
   $: progress.set($building && $job.batch ? ($job.batch.completed.length + $job.percent / 100) / Math.max($job.batch.total, 1) : null);
 
   const primary = "px-5 py-2 rounded bg-primary hover:bg-primary-hover text-text-bright text-[0.88rem] font-semibold disabled:opacity-40";
@@ -160,6 +166,8 @@
       {#if $job.result === "done"}
         <h3 class="text-[1.05rem] font-semibold text-text-bright mb-1">{$_("batch.doneTitle")}</h3>
         <p class="text-[0.85rem] text-text break-all select-text">{$_("batch.doneText", { values: { n: $job.batch.completed.length, dest: $job.batch.dest } })}</p>
+        <p class="text-[0.8rem] text-text-muted mt-2 break-words select-text">{$_("stats.time")}: <span class="font-mono text-text-bright">{duration(queueTime)}</span></p>
+        <p class="text-[0.78rem] text-text-muted mt-1 break-words select-text">{$_("batch.finished", { values: { names: queueTimes } })}</p>
       {:else if $job.result === "failed"}
         <h3 class="text-[1.05rem] font-semibold text-danger mb-1">{$_("batch.failedTitle")}</h3>
         <p class="text-[0.85rem] text-text mb-2 break-words select-text">{$job.error}</p>
@@ -245,6 +253,8 @@
         <p class="text-[0.78rem] text-text-muted mt-2 text-right">{$_("batch.allBuilt")}</p>
       {/if}
     </div>
+
+    <BuildTimes />
   </div>
 {/if}
 

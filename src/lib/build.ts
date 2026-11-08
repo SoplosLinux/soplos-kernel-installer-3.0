@@ -20,6 +20,10 @@ export interface BatchProgress {
   total: number;
   name: string;
   completed: string[];
+  /** How long each finished kernel took, in seconds, in the same order. */
+  timings: number[];
+  /** When the kernel being built started, in milliseconds since 1970. */
+  startedAt: number;
   dest: string;
   failed: string | null;
 }

@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.0.0-4-beta] - 2026-11-08
+
+### Fixed
+- The patches of a recipe were not applied all or none. GNU `patch` applies the hunks that fit and leaves the others in a `.rej` file when one does not fit, so a patch that failed left files with some of its changes, and the patches applied before it stayed applied. Now each patch is tried with `--dry-run` and applied only if it fits whole; a patch that is in the tree already counts as applied only if all of it is there. If one patch does not apply, or the build is cancelled half way, the ones applied before come out again in reverse order and the tree is as it was; if they cannot come out, the sources are deleted, so a kernel with some of its patches is never built or reused.
+
+### Added
+- How long each kernel of a batch takes. The kernel in course shows its own time next to the stage, the finished ones show what each took, and the summary of a finished queue shows the total.
+- A history of how long each kernel took to build, kept in `~/.local/share/soplos-kernel-installer/build-times.json` (the last 500), for the kernels of a batch and for the ones built on their own, counting from the download to the packages. The Batch page lists the last ones, the newest first, with the date, the kernel, the version and the time.
+
 ## [3.0.0-3-beta] - 2026-11-08
 
 ### Fixed

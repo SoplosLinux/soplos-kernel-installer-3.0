@@ -10,4 +10,5 @@ pub mod patches;
 pub mod pipeline;
 pub mod recipe;
 pub mod runner;
+pub mod times;
 pub mod versions;

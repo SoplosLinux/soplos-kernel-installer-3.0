@@ -11,6 +11,7 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use tauri::AppHandle;
 
 const MARCHES: [&str; 4] = ["v1", "v2", "v3", "v4"];
@@ -230,10 +231,35 @@ fn clean(builds: &Path, version: &str) {
     }
 }
 
-fn progress(index: u32, total: u32, name: &str, completed: &[String], dest: &str, failed: Option<String>) {
+/// Where the queue is: the kernel that is being built, the ones that are finished
+/// with the time each took, and when the current one started.
+struct Track<'a> {
+    index: u32,
+    total: u32,
+    name: &'a str,
+    completed: &'a [String],
+    timings: &'a [u64],
+    started_at: u64,
+    dest: &'a str,
+}
+
+fn now_ms() -> u64 {
+    SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_millis() as u64).unwrap_or(0)
+}
+
+fn progress(t: &Track, failed: Option<String>) {
     if let Ok(mut s) = state().lock() {
         s.percent = 0.0;
-        s.batch = Some(pipeline::BatchProgress { index, total, name: name.to_string(), completed: completed.to_vec(), dest: dest.to_string(), failed });
+        s.batch = Some(pipeline::BatchProgress {
+            index: t.index,
+            total: t.total,
+            name: t.name.to_string(),
+            completed: t.completed.to_vec(),
+            timings: t.timings.to_vec(),
+            started_at: t.started_at,
+            dest: t.dest.to_string(),
+            failed,
+        });
     }
 }
 
@@ -254,12 +280,15 @@ fn run(ctx: &Ctx, spec: &BatchSpec) -> Result<String, String> {
     pipeline::ensure_deps(ctx)?;
 
     let mut completed: Vec<String> = Vec::new();
+    let mut timings: Vec<u64> = Vec::new();
     for (i, job) in jobs.iter().enumerate() {
         check_cancel()?;
         let index = i as u32 + 1;
         clean(&builds, &spec.version);
         pipeline::reset_log();
-        progress(index, total, &job.name, &completed, &spec.dest, None);
+        let started = Instant::now();
+        let started_at = now_ms();
+        progress(&Track { index, total, name: &job.name, completed: &completed, timings: &timings, started_at, dest: &spec.dest }, None);
         ctx.info("build", 0.0, &format!("[{index}/{total}] {}", job.name));
 
         let recipe = Recipe {
@@ -279,19 +308,20 @@ fn run(ctx: &Ctx, spec: &BatchSpec) -> Result<String, String> {
             Err(e) if e == "cancelled" => return Err(e),
             Err(e) => {
                 // Its sources and its log stay for whoever looks at them.
-                progress(index, total, &job.name, &completed, &spec.dest, Some(builds.to_string_lossy().to_string()));
+                progress(&Track { index, total, name: &job.name, completed: &completed, timings: &timings, started_at, dest: &spec.dest }, Some(builds.to_string_lossy().to_string()));
                 return Err(format!("The build of {} failed: {e}", job.name));
             }
         };
         let saved = match save_packages(&builds, &root, job, &spec.version, spec.revision, &release) {
             Ok(dir) => dir,
             Err(e) => {
-                progress(index, total, &job.name, &completed, &spec.dest, Some(builds.to_string_lossy().to_string()));
+                progress(&Track { index, total, name: &job.name, completed: &completed, timings: &timings, started_at, dest: &spec.dest }, Some(builds.to_string_lossy().to_string()));
                 return Err(e);
             }
         };
         completed.push(job.name.clone());
-        progress(index, total, &job.name, &completed, &spec.dest, None);
+        timings.push(started.elapsed().as_secs());
+        progress(&Track { index, total, name: &job.name, completed: &completed, timings: &timings, started_at, dest: &spec.dest }, None);
         ctx.info("done", 100.0, &format!("[{index}/{total}] {} saved in {}", job.name, saved.display()));
         clean(&builds, &spec.version);
     }
@@ -300,7 +330,7 @@ fn run(ctx: &Ctx, spec: &BatchSpec) -> Result<String, String> {
 
 pub fn start(app: AppHandle, spec: BatchSpec) -> Result<(), String> {
     resolve(&spec)?;
-    let initial = pipeline::BatchProgress { index: 0, total: spec.jobs.len() as u32, name: String::new(), completed: Vec::new(), dest: spec.dest.clone(), failed: None };
+    let initial = pipeline::BatchProgress { index: 0, total: spec.jobs.len() as u32, name: String::new(), completed: Vec::new(), timings: Vec::new(), started_at: now_ms(), dest: spec.dest.clone(), failed: None };
     pipeline::spawn(app, None, Some(initial), move |ctx| run(ctx, &spec))
 }
 

@@ -420,8 +420,12 @@
     "keep": "Keep the folder",
     "delete": "Delete the folder"
   },
+  "times": {
+    "title": "How long each kernel took to build"
+  },
   "stats": {
     "time": "Time",
+    "kernel": "This kernel",
     "cpu": "CPU",
     "load": "Load: {a} · {b} · {c} (1, 5, 15 min)",
     "memory": "Memory",

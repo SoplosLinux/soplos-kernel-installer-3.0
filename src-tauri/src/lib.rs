@@ -33,6 +33,7 @@ pub fn run() {
             commands::system::get_running_kernel,
             commands::stats::get_system_stats,
             commands::kernel_build::clean_build_dir,
+            commands::kernel_build::get_build_times,
             commands::hardware::get_hardware_info,
             commands::kernel_build::list_kernel_versions,
             commands::kernel_build::get_build_environment,

@@ -420,8 +420,12 @@
     "keep": "Manter a pasta",
     "delete": "Apagar a pasta"
   },
+  "times": {
+    "title": "O tempo que cada kernel demorou a compilar"
+  },
   "stats": {
     "time": "Tempo",
+    "kernel": "Este kernel",
     "cpu": "CPU",
     "load": "Carga: {a} · {b} · {c} (1, 5, 15 min)",
     "memory": "Memória",
