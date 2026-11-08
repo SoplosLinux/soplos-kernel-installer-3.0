@@ -357,6 +357,12 @@ fn multiarch() -> String {
     Command::new("gcc").arg("-print-multiarch").output().map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string()).unwrap_or_default()
 }
 
+/// Whether a line of the output of the compilation says what went wrong.
+fn is_build_error(line: &str) -> bool {
+    let lower = line.to_lowercase();
+    lower.contains("error:") || lower.contains("fatal error") || lower.contains("undefined reference") || lower.contains("no rule to make target") || lower.contains("cannot find") || (lower.contains("not found") && lower.contains("***"))
+}
+
 fn compile(ctx: &Ctx, source: &Path, cores: u32, kdeb: u32) -> Result<(), String> {
     ctx.info("build", 30.0, &format!("Compiling with {cores} cores"));
     let total = count_c_files(source).max(15000) as f32;
@@ -368,6 +374,9 @@ fn compile(ctx: &Ctx, source: &Path, cores: u32, kdeb: u32) -> Result<(), String
     }
     let mut done = 0f32;
     let mut tail: Vec<String> = Vec::new();
+    // The first lines that say what went wrong: the ones at the end of the output
+    // are only the `make` of the packages saying that it stopped.
+    let mut errors: Vec<String> = Vec::new();
     let code = run_stream(cmd, &CANCEL, &mut |line| {
         let counts = [" CC ", " LD ", " AR "].iter().any(|k| line.contains(k)) || line.starts_with("CC ") || line.starts_with("LD ") || line.starts_with("AR ");
         if counts {
@@ -382,10 +391,18 @@ fn compile(ctx: &Ctx, source: &Path, cores: u32, kdeb: u32) -> Result<(), String
         if tail.len() > 12 {
             tail.remove(0);
         }
+        if errors.len() < 6 && is_build_error(line) {
+            errors.push(line.chars().take(200).collect::<String>());
+        }
     })?;
     check_cancel()?;
     if code != 0 {
-        return Err(format!("The compilation failed ({code}). Last lines: {}", tail.iter().rev().take(4).rev().cloned().collect::<Vec<_>>().join(" | ")));
+        let last = tail.iter().rev().take(4).rev().cloned().collect::<Vec<_>>().join(" | ");
+        return Err(if errors.is_empty() {
+            format!("The compilation failed ({code}). Last lines: {last}")
+        } else {
+            format!("The compilation failed ({code}). First errors: {} | Last lines: {last}", errors.join(" | "))
+        });
     }
     Ok(())
 }
@@ -682,6 +699,16 @@ mod tests {
         assert_eq!(percent_of("  0.0%"), Some(0.0));
         assert_eq!(percent_of("curl: (22) error"), None);
         assert_eq!(percent_of("500%"), None);
+    }
+
+    #[test]
+    fn the_lines_that_say_what_went_wrong() {
+        assert!(is_build_error("net/ipv4/tcp_bbr.c:1234:5: error: 'struct tcp_sock' has no member named 'x'"));
+        assert!(is_build_error("fatal error: linux/foo.h: No such file or directory"));
+        assert!(is_build_error("ld: net/built-in.a: undefined reference to `bbr_init'"));
+        assert!(is_build_error("make[4]: *** No rule to make target 'x.o'.  Stop."));
+        assert!(!is_build_error("make[2]: *** [scripts/Makefile.package:126: bindeb-pkg] Error 2"));
+        assert!(!is_build_error("  CC      kernel/sched/core.o"));
     }
 
     #[test]

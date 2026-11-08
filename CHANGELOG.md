@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.0.0-5-beta] - 2026-11-08
+
+### Fixed
+- When the compilation of a kernel failed, the message showed only the last four lines of the output, which are the `make` of the packages saying that it stopped. It now also shows the first lines that say what went wrong (`error:`, `fatal error`, `undefined reference`, `No rule to make target`), before the last lines. The whole output stays in `~/kernel_build/build.log`.
+
 ## [3.0.0-4-beta] - 2026-11-08
 
 ### Fixed

@@ -180,6 +180,11 @@
   </developer>
 
   <releases>
+    <release version="3.0.0-5-beta" date="2026-11-08">
+      <description>
+        <p>When the compilation of a kernel fails, the message shows the first lines that say what went wrong, and not only the last ones, which are the make of the packages saying that it stopped.</p>
+      </description>
+    </release>
     <release version="3.0.0-4-beta" date="2026-11-08">
       <description>
         <p>The patches of a kernel are applied all or none: if one does not apply, the ones applied before come out again and no kernel with some of its patches is built. The BORE patch of firelzrd is found again in the layout its repository has now. A batch shows how long each kernel takes, and the program keeps a history of how long each kernel took to build.</p>
