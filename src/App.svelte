@@ -7,7 +7,7 @@
   import Sidebar from "./components/Sidebar.svelte";
   import Hero from "./components/Hero.svelte";
   import { api } from "./lib/api";
-  import { initBuild } from "./lib/build";
+  import { initBuild, job } from "./lib/build";
   import WindowControls from "./components/WindowControls.svelte";
   import AboutDialog from "./components/AboutDialog.svelte";
   import Build from "./views/Build.svelte";
@@ -42,6 +42,18 @@
   let active = "build";
   let appVersion = "";
   let running = "";
+
+  // While something is being built, the strip along the bottom says where it is
+  // and what the build says now, in every page but the ones that already show it.
+  // A click leads to the Build page, which has all of the output.
+  $: batchJob = $job.batch;
+  $: showBuildStrip = $job.running && active !== "build" && !(active === "batch" && batchJob !== null);
+  $: stripTitle = batchJob
+    ? `${$_("batch.running", { values: { index: Math.max(batchJob.index, 1), total: batchJob.total } })}: ${batchJob.name}`
+    : $job.stage
+      ? `${$_(`build.progress.stages.${$job.stage}`)} · ${Math.round($job.percent)}%`
+      : "";
+  $: stripLast = $job.lines[$job.lines.length - 1] ?? "";
 
   // With `decorations` off in tauri.conf.json (and `transparent` on) the system
   // draws no frame: the window is one card with rounded corners and the buttons
@@ -92,7 +104,8 @@
   $: activeTab = tabs.find((t) => t.id === active) ?? tabs[0];
   $: ActiveView = views[activeTab.id];
 
-  // F1 -> About, Ctrl+Q -> quit, Ctrl+1..5 -> the pages, Ctrl+Shift+D -> batch page.
+  // F1 -> About, Ctrl+Q -> quit, Ctrl+1..5 -> the pages, Ctrl+Tab and Ctrl+Shift+Tab
+  // -> the next and the previous page, Ctrl+Shift+D -> batch page.
   let aboutOpen = false;
 
   function handleKeydown(e: KeyboardEvent) {
@@ -104,6 +117,14 @@
     if (e.ctrlKey && (e.key === "q" || e.key === "Q")) {
       e.preventDefault();
       getCurrentWindow().close();
+      return;
+    }
+    // Ctrl+Tab and Ctrl+Shift+Tab: the next and the previous page, as in the other programs.
+    if (e.ctrlKey && !e.altKey && e.key === "Tab") {
+      e.preventDefault();
+      const i = tabs.findIndex((t) => t.id === active);
+      const next = (i + (e.shiftKey ? -1 : 1) + tabs.length) % tabs.length;
+      select(tabs[next].id);
       return;
     }
     // Ctrl+1 to Ctrl+5: the pages, in the order of the sidebar.
@@ -146,6 +167,13 @@
       />
       <svelte:component this={ActiveView} />
     </div>
+
+    {#if showBuildStrip}
+      <button class="shrink-0 flex items-center gap-3 border-t border-border bg-surface px-4 py-1.5 text-left text-[0.78rem] hover:bg-surface-2" on:click={() => select("build")}>
+        <span class="shrink-0 font-semibold text-primary">{stripTitle}</span>
+        <span class="min-w-0 truncate text-text-muted">{stripLast}</span>
+      </button>
+    {/if}
 
     <div class="h-1.5 bg-surface-2 overflow-hidden shrink-0" class:invisible={$progress === null}>
       {#if typeof $progress === "number"}

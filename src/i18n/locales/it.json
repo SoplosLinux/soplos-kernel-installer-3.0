@@ -415,6 +415,20 @@
       "restart": "Non è stato possibile riavviare il computer"
     }
   },
+  "cancel": {
+    "question": "Vuoi conservare la cartella delle compilazioni? Conservarla permette di riutilizzare quanto scaricato nella prossima compilazione.",
+    "keep": "Conserva la cartella",
+    "delete": "Elimina la cartella"
+  },
+  "stats": {
+    "time": "Tempo",
+    "cpu": "CPU",
+    "load": "Carico: {a} · {b} · {c} (1, 5, 15 min)",
+    "memory": "Memoria",
+    "disk": "Disco",
+    "free": "{n} GB liberi",
+    "temperature": "Temperatura"
+  },
   "batch": {
     "description": "Compila più kernel uno dopo l'altro.",
     "version": "Versione del kernel",
@@ -426,6 +440,7 @@
     "revision": "Revisione",
     "revisionHint": "0 è una versione del kernel mai compilata. Aumentala solo quando ricompili la stessa versione con altre patch (1 è la prima ricompilazione), perché apt veda un vero aggiornamento.",
     "cores": "Core",
+    "options": "Opzioni",
     "resume": "Riprendi: salta i kernel già compilati nella destinazione",
     "kernels": "Kernel",
     "selectAll": "Seleziona tutti",

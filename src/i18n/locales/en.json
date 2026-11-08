@@ -415,6 +415,20 @@
       "restart": "The computer could not be restarted"
     }
   },
+  "cancel": {
+    "question": "Do you want to keep the folder of the builds? Keeping it lets the next build reuse what was downloaded.",
+    "keep": "Keep the folder",
+    "delete": "Delete the folder"
+  },
+  "stats": {
+    "time": "Time",
+    "cpu": "CPU",
+    "load": "Load: {a} · {b} · {c} (1, 5, 15 min)",
+    "memory": "Memory",
+    "disk": "Disk",
+    "free": "{n} GB free",
+    "temperature": "Temperature"
+  },
   "batch": {
     "description": "Build several kernels one after another.",
     "version": "Kernel version",
@@ -426,6 +440,7 @@
     "revision": "Revision",
     "revisionHint": "0 is a kernel version never built before. Raise it only when recompiling the same version with different patches (1 is the first recompile), so that apt sees a real upgrade.",
     "cores": "Cores",
+    "options": "Options",
     "resume": "Resume: skip the kernels already built in the destination",
     "kernels": "Kernels",
     "selectAll": "Select all",

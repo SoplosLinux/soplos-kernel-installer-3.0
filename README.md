@@ -1,6 +1,6 @@
 # Soplos Kernel Installer 3.0
 
-![Version](https://img.shields.io/badge/version-3.0.0--2--beta-blue)
+![Version](https://img.shields.io/badge/version-3.0.0--3--beta-blue)
 ![License](https://img.shields.io/badge/license-GPL--3.0--or--later-green)
 ![Platform](https://img.shields.io/badge/platform-Linux-lightgrey)
 ![Tauri](https://img.shields.io/badge/Tauri-2-orange)
@@ -38,6 +38,7 @@ This is a beta of the rewrite of the 2.x program (Python 3 and GTK3), for the de
 | F1 | About |
 | Ctrl+1 to Ctrl+4 | Build, Kernels, Installed, Secure Boot |
 | Ctrl+5 | Batch, when it is shown |
+| Ctrl+Tab, Ctrl+Shift+Tab | The next page, the previous page |
 | Ctrl+Shift+D | Show or hide Batch |
 | Ctrl+Q | Quit |
 

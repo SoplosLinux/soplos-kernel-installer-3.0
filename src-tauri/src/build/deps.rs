@@ -47,7 +47,12 @@ fn is_there(package: &str) -> bool {
     match package {
         "g++" => program_present("g++") || installed(package),
         "xz-utils" => program_present("xz") || installed(package),
-        "dpkg-dev" | "libssl-dev" | "libelf-dev" | "linux-libc-dev" | "libncurses-dev" | "libdw-dev" | "rust-src" | "libclang-dev" | "libc6-dev" | "dwarves" => installed(package),
+        // Rust counts as there when the package of Debian is, or when the `rustc`
+        // of the PATH (the one of rustup, say) finds the source of the standard
+        // library. A `rustc` that is only a program on the PATH is not enough:
+        // without the source the kernel says Rust is not available.
+        "rustc" | "rust-src" => installed(package) || rustc_has_core_source("rustc"),
+        "dpkg-dev" | "libssl-dev" | "libelf-dev" | "linux-libc-dev" | "libncurses-dev" | "libdw-dev" | "libclang-dev" | "libc6-dev" | "dwarves" => installed(package),
         other => program_present(other) || installed(other),
     }
 }
@@ -83,6 +88,37 @@ fn version_of(program: &str) -> Option<String> {
     String::from_utf8_lossy(&out.stdout).lines().next().map(|l| l.trim().to_string()).filter(|l| !l.is_empty())
 }
 
+/// Whether a `rustc` finds the source of the standard library, which Rust in the
+/// kernel needs (`make rustavailable` looks for it).
+fn rustc_has_core_source(rustc: &str) -> bool {
+    let Ok(out) = Command::new(rustc).args(["--print", "sysroot"]).output() else { return false };
+    let sysroot = String::from_utf8_lossy(&out.stdout).trim().to_string();
+    !sysroot.is_empty() && Path::new(&sysroot).join("lib/rustlib/src/rust/library/core/src/lib.rs").is_file()
+}
+
+/// `path` with /usr/bin in front of everything else.
+fn path_with_usr_bin_first(path: Option<std::ffi::OsString>) -> Option<std::ffi::OsString> {
+    let mut dirs = vec![std::path::PathBuf::from("/usr/bin")];
+    if let Some(path) = path {
+        dirs.extend(std::env::split_paths(&path));
+    }
+    std::env::join_paths(dirs).ok()
+}
+
+/// The PATH the commands of a build need, when it has to change. Kbuild takes
+/// `rustc` from the PATH, and the one of rustup comes before /usr/bin in the PATH
+/// of many sessions: its toolchain has no `rust-src` unless it was added, and the
+/// kernel then says Rust is not available even with the package `rust-src`
+/// installed. When the `rustc` that would be used cannot find the source of the
+/// standard library and the one of /usr/bin can, /usr/bin goes first. `None`
+/// leaves the PATH as it is.
+pub fn build_path() -> Option<std::ffi::OsString> {
+    if rustc_has_core_source("rustc") || !Path::new("/usr/bin/rustc").is_file() || !rustc_has_core_source("/usr/bin/rustc") {
+        return None;
+    }
+    path_with_usr_bin_first(std::env::var_os("PATH"))
+}
+
 pub fn check() -> Deps {
     let mut deps = Deps::default();
     for package in REQUIRED {
@@ -105,7 +141,8 @@ pub fn check() -> Deps {
             }
         }
     }
-    deps.rustc = version_of("rustc");
+    // The version shown is the one of the `rustc` the build will use.
+    deps.rustc = if build_path().is_some() { version_of("/usr/bin/rustc") } else { version_of("rustc") };
     deps.bindgen = version_of("bindgen");
     deps
 }
@@ -121,6 +158,16 @@ mod tests {
         assert!(allowed("libc6-dev"));
         assert!(!allowed("firefox"));
         assert!(!allowed("rustc; rm -rf /"));
+    }
+
+    #[test]
+    fn usr_bin_goes_first_in_the_path() {
+        let path = path_with_usr_bin_first(Some("/home/u/.cargo/bin:/usr/local/bin:/usr/bin".into())).unwrap();
+        let dirs: Vec<_> = std::env::split_paths(&path).collect();
+        assert_eq!(dirs[0], std::path::PathBuf::from("/usr/bin"));
+        assert_eq!(dirs[1], std::path::PathBuf::from("/home/u/.cargo/bin"));
+        let alone = path_with_usr_bin_first(None).unwrap();
+        assert_eq!(std::env::split_paths(&alone).count(), 1);
     }
 
     #[test]

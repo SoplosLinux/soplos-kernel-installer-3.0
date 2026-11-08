@@ -185,6 +185,9 @@ pub fn configure(
     let rust_binder = has_rust_binder(dir);
     if rust_binder {
         emit(Level::Info, "Rust and the Binder of Waydroid");
+        if super::deps::build_path().is_some() {
+            emit(Level::Info, "The Rust of /usr/bin is used: the one of rustup has no rust-src");
+        }
         tree.run(&[ConfigOp::Enable("RUST".into())]);
         // The Rust driver depends on the C one being off.
         if tree.declares("drivers/android/Kconfig", "ANDROID_BINDER_IPC") {

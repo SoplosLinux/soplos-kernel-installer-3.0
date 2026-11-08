@@ -180,6 +180,11 @@
   </developer>
 
   <releases>
+    <release version="3.0.0-3-beta" date="2026-11-08">
+      <description>
+        <p>Kernels with the Rust Binder (6.18 and newer) build also when the Rust of the user has no rust-src, because the Rust of Debian is used. The batch page is in four boxes, a batch is followed in the Build page too, and the output of a build goes down to its last line without a second scroll. Added the panel of what a build costs the computer (time, CPU, memory, disk and temperature), the question about the folder of the builds when a build is cancelled, and Ctrl+Tab to change page.</p>
+      </description>
+    </release>
     <release version="3.0.0-2-beta" date="2026-11-07">
       <description>
         <p>On a computer with an NVIDIA graphics card, the package installs a kernel hook that downloads the latest patches of the nvidia-patches project and applies them to the NVIDIA driver sources before DKMS builds the module, so the kernels that arrive from a terminal build it too.</p>

@@ -415,6 +415,20 @@
       "restart": "Calculatorul nu a putut fi repornit"
     }
   },
+  "cancel": {
+    "question": "Vrei să păstrezi dosarul compilărilor? Păstrarea lui permite reutilizarea a ceea ce s-a descărcat la următoarea compilare.",
+    "keep": "Păstrează dosarul",
+    "delete": "Șterge dosarul"
+  },
+  "stats": {
+    "time": "Timp",
+    "cpu": "CPU",
+    "load": "Încărcare: {a} · {b} · {c} (1, 5, 15 min)",
+    "memory": "Memorie",
+    "disk": "Disc",
+    "free": "{n} GB liberi",
+    "temperature": "Temperatură"
+  },
   "batch": {
     "description": "Compilează mai multe kernele unul după altul.",
     "version": "Versiunea kernelului",
@@ -426,6 +440,7 @@
     "revision": "Revizie",
     "revisionHint": "0 este o versiune de kernel niciodată compilată. Mărește-o doar când recompilezi aceeași versiune cu alte patch-uri (1 este prima recompilare), ca apt să vadă o actualizare reală.",
     "cores": "Nuclee",
+    "options": "Opțiuni",
     "resume": "Reia: sari peste kernelele deja compilate în destinație",
     "kernels": "Kernele",
     "selectAll": "Selectează toate",

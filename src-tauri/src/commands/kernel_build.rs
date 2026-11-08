@@ -136,6 +136,13 @@ pub fn clean_build_files(version: String) -> Result<u64, String> {
     pipeline::clean_files(&version)
 }
 
+/// Deletes the folder of the builds (`~/kernel_build`) after a build was
+/// cancelled. Returns what it freed.
+#[tauri::command(async)]
+pub fn clean_build_dir() -> Result<u64, String> {
+    pipeline::remove_build_dir()
+}
+
 /// The kernels of a release, for a channel ("", "rc", "lts" or "eol").
 #[tauri::command]
 pub fn get_batch_queue(channel: String) -> Result<Vec<BatchJob>, String> {

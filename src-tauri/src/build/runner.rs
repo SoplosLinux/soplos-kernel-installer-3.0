@@ -1,6 +1,7 @@
 // Running the programs of a build: what they print is followed line by line,
 // and a build that is cancelled is stopped with everything it started.
 
+use std::ffi::OsStr;
 use std::io::Read;
 use std::os::unix::process::CommandExt;
 use std::process::{Command, Stdio};
@@ -8,10 +9,21 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc;
 use std::time::{Duration, Instant};
 
+// A `make` of a build takes the `rustc` of the PATH. If that one cannot find the
+// source of the standard library and the one of Debian can, Debian goes first.
+fn rust_path(cmd: &mut Command) {
+    if cmd.get_program() == OsStr::new("make") {
+        if let Some(path) = super::deps::build_path() {
+            cmd.env("PATH", path);
+        }
+    }
+}
+
 /// Runs a command and hands every line it prints (output and errors, the
 /// carriage return of a progress bar counted as a line end) to `on_line`.
 /// Returns its exit code, or 130 when `cancel` stopped it.
 pub fn run_stream(mut cmd: Command, cancel: &AtomicBool, on_line: &mut dyn FnMut(&str)) -> Result<i32, String> {
+    rust_path(&mut cmd);
     cmd.stdin(Stdio::null()).stdout(Stdio::piped()).stderr(Stdio::piped());
     // Its own group, so that cancelling stops make and every compiler below it.
     cmd.process_group(0);
@@ -92,6 +104,7 @@ fn stop_group(child: &mut std::process::Child) {
 
 /// Runs a command to the end and returns its exit code and what it printed.
 pub fn run_capture(mut cmd: Command) -> (i32, String) {
+    rust_path(&mut cmd);
     match cmd.output() {
         Ok(o) => (o.status.code().unwrap_or(1), String::from_utf8_lossy(&o.stdout).to_string() + &String::from_utf8_lossy(&o.stderr)),
         Err(e) => (127, e.to_string()),

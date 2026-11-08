@@ -31,6 +31,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             system_theme::get_system_theme,
             commands::system::get_running_kernel,
+            commands::stats::get_system_stats,
+            commands::kernel_build::clean_build_dir,
             commands::hardware::get_hardware_info,
             commands::kernel_build::list_kernel_versions,
             commands::kernel_build::get_build_environment,

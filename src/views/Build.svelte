@@ -1,10 +1,13 @@
 <script lang="ts">
-  import { getContext, onMount } from "svelte";
+  import { afterUpdate, beforeUpdate, getContext, onMount } from "svelte";
   import { _ } from "svelte-i18n";
   import { AlertTriangle, AudioLines, Briefcase, Check, ChevronDown, Gamepad2, Minus, Sparkles, Wand2 } from "lucide-svelte";
-  import Modal from "../components/Modal.svelte";
+  import BatchProgress from "../components/BatchProgress.svelte";
+  import BuildStats from "../components/BuildStats.svelte";
+  import CancelDialog from "../components/CancelDialog.svelte";
   import { api } from "../lib/api";
-  import { building, job, type Recipe } from "../lib/build";
+  import { building, cancelBuild, job, type Recipe } from "../lib/build";
+  import { fitToWindow } from "../lib/fit";
   import { progress } from "../lib/progress";
 
   interface KernelVersion {
@@ -161,9 +164,9 @@
     }
   }
 
-  async function cancel() {
+  async function cancel(deleteFolder: boolean) {
     confirmCancel = false;
-    await api.invoke("cancel_build");
+    await cancelBuild(deleteFolder);
   }
 
   async function clean() {
@@ -188,6 +191,16 @@
     step = 3;
   }
 
+  // The output follows its last line unless it was scrolled up to read it.
+  let logBox: HTMLPreElement | undefined;
+  let stick = true;
+  beforeUpdate(() => {
+    stick = !logBox || logBox.scrollHeight - logBox.scrollTop - logBox.clientHeight < 40;
+  });
+  afterUpdate(() => {
+    if (logBox && stick) logBox.scrollTop = logBox.scrollHeight;
+  });
+
   $: progress.set($building ? $job.percent / 100 : null);
   $: stageIndex = STAGES.indexOf($job.stage === "build" || $job.stage === "packages" ? $job.stage : $job.stage);
   // A batch has its own page: here it only says so.
@@ -200,9 +213,7 @@
 </script>
 
 {#if $job.batch && $job.running}
-  <section class={card}>
-    <p class="text-[0.88rem] text-text">{$_("build.batchRunning")}</p>
-  </section>
+  <BatchProgress />
 {:else if shown}
   <section class={card}>
     {#if $job.result === "done"}
@@ -246,6 +257,7 @@
         {/each}
       </ol>
       <p class="text-[0.8rem] text-text-muted truncate mb-3" title={$job.lines[$job.lines.length - 1] ?? ""}>{$job.lines[$job.lines.length - 1] ?? ""}</p>
+      <BuildStats />
       <div class="flex items-center gap-3">
         <button class={secondary} on:click={() => (confirmCancel = true)}>{$_("build.progress.cancel")}</button>
         <button class="text-[0.8rem] text-primary hover:underline" on:click={() => (showLog = !showLog)}>
@@ -253,7 +265,7 @@
         </button>
       </div>
       {#if showLog}
-        <pre class="mt-3 max-h-[260px] overflow-auto rounded bg-surface-2 p-3 text-[0.72rem] text-text-muted select-text whitespace-pre-wrap">{$job.lines.join("\n")}</pre>
+        <pre bind:this={logBox} use:fitToWindow class="content-scroll mt-3 min-h-[140px] overflow-auto overscroll-contain rounded bg-surface-2 p-3 text-[0.72rem] text-text-muted select-text whitespace-pre-wrap">{$job.lines.join("\n")}</pre>
       {/if}
     {/if}
   </section>
@@ -508,7 +520,5 @@
 {/if}
 
 {#if confirmCancel}
-  <Modal variant="warning" title={$_("build.progress.cancelTitle")} confirmLabel={$_("build.progress.cancel")} cancelLabel={$_("build.progress.keepGoing")} onConfirm={cancel} onClose={() => (confirmCancel = false)}>
-    <p class="text-[0.85rem] text-text">{$_("build.progress.cancelText")}</p>
-  </Modal>
+  <CancelDialog title={$_("build.progress.cancelTitle")} onChoose={cancel} onClose={() => (confirmCancel = false)} />
 {/if}

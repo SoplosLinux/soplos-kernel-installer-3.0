@@ -415,6 +415,20 @@
       "restart": "Não foi possível reiniciar o computador"
     }
   },
+  "cancel": {
+    "question": "Quer manter a pasta de compilação? Mantê-la permite reutilizar o que foi transferido na próxima compilação.",
+    "keep": "Manter a pasta",
+    "delete": "Apagar a pasta"
+  },
+  "stats": {
+    "time": "Tempo",
+    "cpu": "CPU",
+    "load": "Carga: {a} · {b} · {c} (1, 5, 15 min)",
+    "memory": "Memória",
+    "disk": "Disco",
+    "free": "{n} GB livres",
+    "temperature": "Temperatura"
+  },
   "batch": {
     "description": "Compile vários kernels um depois do outro.",
     "version": "Versão do kernel",
@@ -426,6 +440,7 @@
     "revision": "Revisão",
     "revisionHint": "0 é uma versão de kernel nunca compilada. Aumente-a só ao recompilar a mesma versão com outros patches (1 é a primeira recompilação), para que o apt veja uma atualização real.",
     "cores": "Núcleos",
+    "options": "Opções",
     "resume": "Retomar: saltar os kernels já compilados no destino",
     "kernels": "Kernels",
     "selectAll": "Selecionar todos",

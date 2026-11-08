@@ -415,6 +415,20 @@
       "restart": "L'ordinateur n'a pas pu être redémarré"
     }
   },
+  "cancel": {
+    "question": "Voulez-vous conserver le dossier de compilation ? Le conserver permet de réutiliser ce qui a été téléchargé lors de la prochaine compilation.",
+    "keep": "Conserver le dossier",
+    "delete": "Supprimer le dossier"
+  },
+  "stats": {
+    "time": "Temps",
+    "cpu": "CPU",
+    "load": "Charge : {a} · {b} · {c} (1, 5, 15 min)",
+    "memory": "Mémoire",
+    "disk": "Disque",
+    "free": "{n} Go libres",
+    "temperature": "Température"
+  },
   "batch": {
     "description": "Compilez plusieurs noyaux l'un après l'autre.",
     "version": "Version du noyau",
@@ -426,6 +440,7 @@
     "revision": "Révision",
     "revisionHint": "0 est une version de noyau jamais compilée. Augmentez-la seulement pour recompiler la même version avec d'autres correctifs (1 est la première recompilation), afin qu'apt voie une vraie mise à jour.",
     "cores": "Cœurs",
+    "options": "Options",
     "resume": "Reprendre : ignorer les noyaux déjà compilés dans la destination",
     "kernels": "Noyaux",
     "selectAll": "Tout sélectionner",

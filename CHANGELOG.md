@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.0.0-3-beta] - 2026-11-08
+
+### Fixed
+- A kernel with the Rust Binder (6.18 and newer) failed with `ANDROID_BINDER_IPC_RUST was dropped by olddefconfig` when the `rustc` of the PATH was the one of rustup, which has no `rust-src`: the kernel takes `rustc` from the PATH, the check of the tools only looked at the package `rust-src` of Debian, and the build failed late. The check now counts Rust as there when the package of Debian is, or when the `rustc` of the PATH finds the source of the standard library, and the version it shows is the one the build uses. When the `rustc` of the PATH has no source and the one of `/usr/bin` has it, `/usr/bin` goes first in the PATH of every `make` of the build, and the log says so.
+- A batch was not known as a batch by the window: the Build page drew the stages of a single kernel, with Install among them, and the Batch page said another build was in course. The window now asks the program how the build goes every two seconds, knowing it is a batch or not.
+- The output of a build did not go down to its last line. It follows it now, unless it was scrolled up to read. It is as tall as the room left in the window, so the page has no scroll of its own and the two no longer fight; the wheel does not pass from the output to the page.
+- The Batch page showed the result of the last queue instead of the page. The page of the batch is always there. A queue that ended or failed says how, once, on top of it, and it goes when the page is left; a queue that was cancelled says nothing.
+- The kernels of a batch were listed in two columns that mixed the levels. They are in four groups, Kernels V1 to Kernels V4.
+
+### Added
+- What a build costs the computer, as in the 2.x program: the time it has been running, the load of the CPU (and the load of 1, 5 and 15 minutes), the memory, the disk of the folder of builds and the temperature of the CPU, read every two seconds, in the Build and the Batch pages.
+- The follow-up of a batch in the Build page too, with the stage, the output and what is finished, as in the Batch page. A strip along the bottom of the other pages says which kernel is being built and what the build says now; a click leads to the Build page.
+- Cancelling a build, in the Build page or in a batch, asks whether to delete the folder of the builds (`~/kernel_build`) or keep it, as the 2.x program did. It is deleted when the build has stopped.
+- Ctrl+Tab and Ctrl+Shift+Tab move to the next and the previous page.
+
+### Changed
+- The Batch page is in four boxes, Kernel version (with the revision), Destination folder, Options and Kernels, and the button that starts the queue is outside of them, on the right.
+- The message of a build that is not of the Batch page says what it is doing and has a button to see the details.
+
 ## [3.0.0-2-beta] - 2026-11-07
 
 ### Added

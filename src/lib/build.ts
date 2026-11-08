@@ -43,6 +43,9 @@ const EMPTY: BuildJob = { running: false, stage: "", percent: 0, lines: [], resu
 export const job = writable<BuildJob>(EMPTY);
 export const building = derived(job, (j) => j.running);
 
+/** When the build that runs was first seen, for the clock of the panel of what it costs. */
+export const buildStartedAt = writable<number | null>(null);
+
 let started = false;
 let lastRefresh = 0;
 
@@ -65,8 +68,10 @@ export async function initBuild() {
       refresh();
       return;
     }
-    // The queue of a batch moves on without a terminal event: ask now and then.
-    if (get(job).batch && Date.now() - lastRefresh > 2000) {
+    // The queue of a batch moves on without a terminal event, and a batch that
+    // has just started is not known here until it is asked: ask now and then,
+    // knowing it or not.
+    if (Date.now() - lastRefresh > 2000) {
       lastRefresh = Date.now();
       refresh();
     }
@@ -79,5 +84,27 @@ export async function initBuild() {
     }));
   });
   // Other pages keep their hands off apt while a kernel is built.
-  building.subscribe((running) => busy.set(running));
+  building.subscribe((running) => {
+    busy.set(running);
+    buildStartedAt.update((t) => (running ? t ?? Date.now() : null));
+  });
+}
+
+/**
+ * Cancels the build that runs, and when `deleteFolder` is true deletes the folder
+ * of the builds once the build has stopped, as the 2.x program did.
+ */
+export async function cancelBuild(deleteFolder: boolean) {
+  await api.invoke("cancel_build");
+  if (!deleteFolder) return;
+  // The programs of the build stop a moment after the order: the folder is
+  // deleted when the build says it is over, and not under their feet.
+  for (let i = 0; i < 150 && get(job).running; i++) {
+    await new Promise((resolve) => setTimeout(resolve, 200));
+  }
+  try {
+    await api.invoke("clean_build_dir");
+  } catch (error) {
+    console.error("Failed to delete the folder of the builds", error);
+  }
 }

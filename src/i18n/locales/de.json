@@ -415,6 +415,20 @@
       "restart": "Der Computer konnte nicht neu gestartet werden"
     }
   },
+  "cancel": {
+    "question": "Soll der Ordner der Builds behalten werden? Wenn er bleibt, kann der nächste Build das Heruntergeladene wiederverwenden.",
+    "keep": "Ordner behalten",
+    "delete": "Ordner löschen"
+  },
+  "stats": {
+    "time": "Zeit",
+    "cpu": "CPU",
+    "load": "Last: {a} · {b} · {c} (1, 5, 15 Min.)",
+    "memory": "Speicher",
+    "disk": "Datenträger",
+    "free": "{n} GB frei",
+    "temperature": "Temperatur"
+  },
   "batch": {
     "description": "Kompiliere mehrere Kernel nacheinander.",
     "version": "Kernel-Version",
@@ -426,6 +440,7 @@
     "revision": "Revision",
     "revisionHint": "0 ist eine Kernel-Version, die noch nie gebaut wurde. Erhöhe sie nur, wenn dieselbe Version mit anderen Patches neu kompiliert wird (1 ist die erste Neukompilierung), damit apt ein echtes Upgrade sieht.",
     "cores": "Kerne",
+    "options": "Optionen",
     "resume": "Fortsetzen: bereits im Ziel gebaute Kernel überspringen",
     "kernels": "Kernel",
     "selectAll": "Alle auswählen",

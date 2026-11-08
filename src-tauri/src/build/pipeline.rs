@@ -621,6 +621,24 @@ pub fn files_of(version: &str) -> Result<(PathBuf, PathBuf), String> {
     Ok((builds.join(format!("linux-{version}")), builds.join(tarball_name(version))))
 }
 
+/// Deletes the whole folder of the builds of the user, as the 2.x program did
+/// when a build was cancelled and the user did not want to keep it. It only ever
+/// removes `~/kernel_build` itself: any other folder is left alone. Returns what
+/// it freed. It refuses while a build runs.
+pub fn remove_build_dir() -> Result<u64, String> {
+    if snapshot().running {
+        return Err("busy".to_string());
+    }
+    let dir = build_dir();
+    let home = PathBuf::from(std::env::var_os("HOME").unwrap_or_default());
+    if home.as_os_str().is_empty() || dir != home.join("kernel_build") || !dir.is_dir() {
+        return Ok(0);
+    }
+    let freed = dir_size(&dir);
+    fs::remove_dir_all(&dir).map_err(|e| e.to_string())?;
+    Ok(freed)
+}
+
 pub fn files_size(version: &str) -> u64 {
     let Ok((source, tarball)) = files_of(version) else { return 0 };
     dir_size(&source) + fs::metadata(&tarball).map(|m| m.len()).unwrap_or(0)
