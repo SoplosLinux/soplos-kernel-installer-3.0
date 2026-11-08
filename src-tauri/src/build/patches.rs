@@ -30,6 +30,32 @@ pub fn bore_upstream_api(tree: &str, mm: &str) -> String {
     format!("https://api.github.com/repos/firelzrd/bore-scheduler/contents/patches/{tree}/linux-{mm}-bore")
 }
 
+/// The folder of a tree of the repository of firelzrd, for the layout in which
+/// the files are loose and the name carries the point release the patch was made
+/// for: `0001-linux6.18.48-bore-7.0.0.patch`.
+pub fn bore_tree_api(tree: &str) -> String {
+    format!("https://api.github.com/repos/firelzrd/bore-scheduler/contents/patches/{tree}")
+}
+
+/// The files of a tree, in the loose layout, that are for a kernel line, the one
+/// made for the newest point release first (and, for the same one, the newest
+/// version of BORE).
+pub fn parse_bore_loose(json: &str, mm: &str) -> Vec<String> {
+    let prefix = format!("0001-linux{mm}.");
+    let mut found: Vec<(u32, Vec<u32>, String)> = parse_github_files(json)
+        .into_iter()
+        .filter_map(|name| {
+            let rest = name.strip_prefix(&prefix)?;
+            let (point, after) = rest.split_once("-bore-")?;
+            let point = point.parse::<u32>().ok()?;
+            let bore = after.strip_suffix(".patch")?.split('.').map(|n| n.parse::<u32>().ok()).collect::<Option<Vec<u32>>>()?;
+            Some((point, bore, name))
+        })
+        .collect();
+    found.sort_by(|a, b| (b.0, &b.1).cmp(&(a.0, &a.1)));
+    found.into_iter().map(|(_, _, name)| name).collect()
+}
+
 pub fn zen_soplos_urls(version: &str, mm: &str) -> [String; 2] {
     [
         format!("{RAW_SOPLOS}/zen-soplos/main/patches/0001-zen-{version}.patch"),
@@ -187,7 +213,21 @@ fn download_bore(version: &str, mm: &str, dir: &Path, source: &Path, emit: &mut 
             emit(Level::Warn, &format!("The BORE patch of upstream ({tree}) does not apply to {version}: trying the next one"));
         }
     }
-    // 3. CachyOS.
+    // 3. The upstream repository again, in the layout it has now: loose files with
+    //    the point release in the name. The newest that applies is the one.
+    if let Some(json) = fetch_text(&bore_tree_api("stable")) {
+        for name in parse_bore_loose(&json, mm) {
+            let url = format!("https://raw.githubusercontent.com/firelzrd/bore-scheduler/main/patches/stable/{name}");
+            let dest = dir.join(format!("bore-{name}"));
+            if fetch_file(&url, &dest) {
+                if all_apply(source, &[dest.clone()]) {
+                    return Some(vec![dest]);
+                }
+                emit(Level::Warn, &format!("The BORE patch of upstream ({name}) does not apply to {version}: trying the next one"));
+            }
+        }
+    }
+    // 4. CachyOS.
     let dest = dir.join(format!("bore-cachy-{mm}.patch"));
     if fetch_file(&bore_cachy_url(mm), &dest) {
         if all_apply(source, &[dest.clone()]) {
@@ -455,6 +495,17 @@ mod tests {
         assert_eq!(parse_rt_index(html, "6.9").as_deref(), Some("patch-6.9-rt12.patch.xz"));
         assert_eq!(parse_rt_index(html, "6.8"), None);
         assert_eq!(parse_rt_index(r#"<a href="patch-7.0-rc1-rt1.patch.xz">"#, "7.0").as_deref(), Some("patch-7.0-rc1-rt1.patch.xz"));
+    }
+
+    #[test]
+    fn the_loose_bore_files_of_a_line_newest_first() {
+        let json = r#"[{"name":"0001-linux6.12.37-bore-7.0.0.patch"},{"name":"0001-linux6.18.48-bore-7.0.0.patch"},{"name":"0001-linux6.18.9-bore-7.0.0.patch"},{"name":"0001-linux6.18.48-bore-7.0.1.patch"},{"name":"README.md"},{"name":"0001-linux6.180.1-bore-7.0.0.patch"}]"#;
+        assert_eq!(
+            parse_bore_loose(json, "6.18"),
+            vec!["0001-linux6.18.48-bore-7.0.1.patch", "0001-linux6.18.48-bore-7.0.0.patch", "0001-linux6.18.9-bore-7.0.0.patch"]
+        );
+        assert_eq!(parse_bore_loose(json, "6.12"), vec!["0001-linux6.12.37-bore-7.0.0.patch"]);
+        assert!(parse_bore_loose(json, "7.3").is_empty());
     }
 
     #[test]

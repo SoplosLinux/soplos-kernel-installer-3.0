@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 - The patches of a recipe were not applied all or none. GNU `patch` applies the hunks that fit and leaves the others in a `.rej` file when one does not fit, so a patch that failed left files with some of its changes, and the patches applied before it stayed applied. Now each patch is tried with `--dry-run` and applied only if it fits whole; a patch that is in the tree already counts as applied only if all of it is there. If one patch does not apply, or the build is cancelled half way, the ones applied before come out again in reverse order and the tree is as it was; if they cannot come out, the sources are deleted, so a kernel with some of its patches is never built or reused.
+- The BORE patch of firelzrd was looked for in a folder layout that the repository no longer has (`patches/stable/linux-6.18-bore/`), so for a line like 6.18 it was never found. It is now also looked for in the layout it has now, loose files with the point release in the name (`0001-linux6.18.48-bore-7.0.0.patch`); the one made for the newest point release is tried first, and the first that applies is kept. The order stays: Soplos, firelzrd (both layouts), CachyOS.
 
 ### Added
 - How long each kernel of a batch takes. The kernel in course shows its own time next to the stage, the finished ones show what each took, and the summary of a finished queue shows the total.
