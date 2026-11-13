@@ -39,8 +39,20 @@ fn parse_march(help: &str) -> String {
     "v1".to_string()
 }
 
-/// The x86-64 level (1 to 4) the processor supports, read from its flags.
+/// The x86-64 level (1 to 4) the processor supports: the one the dynamic
+/// linker reports, the same the window shows (supported_march), and the
+/// flags only when the linker gives no answer. The flags alone gave v2 on an
+/// Intel N150 under Proxmox that runs v3 kernels (2026-11-13), while the
+/// window said v3.
 pub fn psabi_level() -> u8 {
+    for ld in ["/lib64/ld-linux-x86-64.so.2", "/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"] {
+        if let Ok(out) = Command::new(ld).arg("--help").output() {
+            let text = String::from_utf8_lossy(&out.stdout).to_string() + &String::from_utf8_lossy(&out.stderr);
+            if text.contains("glibc-hwcaps") {
+                return parse_march(&text)[1..].parse().unwrap_or(1);
+            }
+        }
+    }
     let cpuinfo = fs::read_to_string("/proc/cpuinfo").unwrap_or_default();
     let flags = cpuinfo.lines().find(|l| l.starts_with("flags")).and_then(|l| l.split_once(':')).map(|(_, v)| v.to_string()).unwrap_or_default();
     psabi_from_flags(&flags)

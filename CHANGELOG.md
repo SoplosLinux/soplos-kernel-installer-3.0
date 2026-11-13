@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.0.0-6-beta] - 2026-11-14
+
+### Fixed
+- The x86-64 level used to pick the XanMod package, the other kernels of the list and the `march` of a build was read from the flags of the processor, while the window showed the level the dynamic linker reports (`ld.so --help`). They could differ: an Intel N150 in a Proxmox virtual machine, which runs v3 kernels, showed v3 and got v2. The level now comes from the dynamic linker everywhere, and from the flags only when it gives no answer.
+
 ## [3.0.0-5-beta] - 2026-11-08
 
 ### Fixed

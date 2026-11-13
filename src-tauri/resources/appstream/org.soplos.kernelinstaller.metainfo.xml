@@ -180,6 +180,11 @@
   </developer>
 
   <releases>
+    <release version="3.0.0-6-beta" date="2026-11-14">
+      <description>
+        <p>The level of the processor used to choose a XanMod kernel and to build a kernel is the one the window shows, read from the dynamic linker. Before, the flags of the processor could give a lower one, as on an Intel N150 in a Proxmox virtual machine.</p>
+      </description>
+    </release>
     <release version="3.0.0-5-beta" date="2026-11-08">
       <description>
         <p>When the compilation of a kernel fails, the message shows the first lines that say what went wrong, and not only the last ones, which are the make of the packages saying that it stopped.</p>
