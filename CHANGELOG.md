@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.0.0] - 2026-11-17
+
+First stable release.
+
 ## [3.0.0-6-beta] - 2026-11-14
 
 ### Fixed
