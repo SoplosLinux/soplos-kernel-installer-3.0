@@ -104,6 +104,10 @@
   $: lowSpace = env ? env.freeBytes < NEEDED_GB * 1024 ** 3 : false;
   $: toInstall = env ? [...env.deps.missing, ...env.deps.broken] : [];
   $: signNeedsKey = recipe.sign && env ? !env.keysExist : false;
+  // sched_ext is part of the gaming kernel only, as in the batch. Zen replaces
+  // the scheduler of the kernel, so a gaming kernel with Zen cannot have it.
+  $: recipe.schedExt = recipe.goal === "gaming";
+  $: schedExtOn = recipe.schedExt && !recipe.patches.includes("zen");
 
   // The Rust Binder came with 6.18: a kernel before it is built without Binder.
   function lacksRustBinder(version: string): boolean {
@@ -481,6 +485,13 @@
         <dd class="text-text-bright">{recipe.march.toUpperCase()}</dd>
         <dt class="text-text-muted">{$_("build.computer.sign")}</dt>
         <dd class="text-text-bright">{recipe.sign ? $_("build.recipe.yes") : $_("build.recipe.no")}</dd>
+        {#if recipe.goal === "gaming"}
+          <dt class="text-text-muted">{$_("build.recipe.schedExt")}</dt>
+          <dd>
+            <span class="text-text-bright">{schedExtOn ? $_("build.recipe.yes") : $_("build.recipe.no")}</span>
+            <span class="block text-[0.75rem] text-text-muted">{schedExtOn ? $_("build.recipe.schedExtSlow") : $_("build.recipe.schedExtZen")}</span>
+          </dd>
+        {/if}
       </dl>
 
       <button class="flex items-center gap-1 text-[0.82rem] text-text-muted hover:text-text-bright mb-2" on:click={() => (showAdvanced = !showAdvanced)}>
@@ -488,9 +499,6 @@
       </button>
       {#if showAdvanced}
         <div class="flex flex-col gap-2 mb-3">
-          <label class="flex items-center gap-2 text-[0.85rem] text-text-bright">
-            <input type="checkbox" bind:checked={recipe.schedExt} />{$_("build.recipe.schedExt")}
-          </label>
           {#if sources.exists}
             <label class="flex items-center gap-2 text-[0.85rem] text-text-bright">
               <input type="checkbox" bind:checked={recipe.reuseSources} />{$_("build.recipe.reuse", { values: { size: gb(sources.size) } })}

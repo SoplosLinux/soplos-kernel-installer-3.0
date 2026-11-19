@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 First stable release.
 
+### Fixed
+- sched_ext never reached a kernel. The kernel needs the BTF type information for it (`SCHED_CLASS_EXT` depends on `DEBUG_INFO_BTF`), and the build turned all the debug information off, so `olddefconfig` dropped sched_ext and only a warning said so. The gaming kernels are now built with the DWARF of the toolchain and `DEBUG_INFO_BTF`, and the build stops if `olddefconfig` drops BTF (with the version of pahole, which needs 1.22, or 1.24 with Rust) or sched_ext. The other kernels keep no debug information, as before.
+- The BTF of the modules (`DEBUG_INFO_BTF_MODULES`) stays off: the schedulers of sched_ext read only the BTF of the kernel, and the one of the modules took the image package of a gaming kernel from 91 MB to 113 MB, over the 100 MB a file may weigh in a repository on GitHub, which refused the push. The build stops if `olddefconfig` turns it on.
+- A gaming kernel failed on a computer without `zlib1g-dev` (`libbpf.c: fatal error: zlib.h: No such file or directory`): with BTF the build compiles `resolve_btfids`, and the libbpf inside it includes `<zlib.h>`. `zlib1g-dev` is now one of the tools of the build, installed with the others before the build and the batch start, and counted as missing when its header is gone.
+
+### Changed
+- sched_ext is part of the gaming kernel only. In the batch it goes in the BORE with NTSYNC kernels and in the X3D ones, which carry both; the standard, real-time and Zen kernels do not pay the longer build. In the Build guide it comes with the Gaming goal, without a checkbox, and the summary says that the kernel takes longer to compile. Zen replaces the scheduler of the kernel and its patch makes sched_ext depend on not having it, so a gaming kernel with Zen goes without it and the summary says why.
+- The packages are built without the `-dbg` package (`DEB_BUILD_PROFILES=pkg.linux-upstream.nokerneldbg`): a kernel with debug information would add several GB of symbols that nobody installs. The BTF stays in the kernel and in the modules, which are installed stripped of the DWARF only.
+
 ## [3.0.0-6-beta] - 2026-11-14
 
 ### Fixed

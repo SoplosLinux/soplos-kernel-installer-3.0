@@ -74,6 +74,12 @@ impl Recipe {
         self.patches.iter().any(|p| p == patch)
     }
 
+    /// Whether this kernel gets sched_ext. Zen replaces the scheduler of the
+    /// kernel and its patch makes sched_ext depend on not having it.
+    pub fn wants_sched_ext(&self) -> bool {
+        self.sched_ext && !self.has("zen")
+    }
+
     pub fn is_stock(&self) -> bool {
         self.goal == "stock"
     }

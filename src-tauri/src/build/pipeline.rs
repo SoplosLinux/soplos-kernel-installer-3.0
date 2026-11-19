@@ -368,6 +368,9 @@ fn compile(ctx: &Ctx, source: &Path, cores: u32, kdeb: u32) -> Result<(), String
     let total = count_c_files(source).max(15000) as f32;
     let mut cmd = Command::new("make");
     cmd.arg(format!("-j{cores}")).arg("bindeb-pkg").current_dir(source).env("KDEB_PKGVERSION", kdeb.to_string());
+    // A kernel with debug information (the gaming ones, for sched_ext) would
+    // also build a -dbg package of several GB that nobody installs.
+    cmd.env("DEB_BUILD_PROFILES", "pkg.linux-upstream.nokerneldbg");
     let arch = multiarch();
     if !arch.is_empty() {
         cmd.env("C_INCLUDE_PATH", format!("/usr/include/{arch}"));

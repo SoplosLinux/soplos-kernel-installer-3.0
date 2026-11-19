@@ -55,8 +55,31 @@ pub fn has_rust_binder(dir: &Path) -> bool {
     Tree { dir: dir.to_path_buf() }.declares("drivers/android/Kconfig", "ANDROID_BINDER_IPC_RUST")
 }
 
-fn debug_info_fixes() -> Vec<ConfigOp> {
+/// The debug information of the kernel. It stays off, because it makes a build
+/// several times longer, except for what sched_ext needs: the BTF type
+/// information of the kernel, which pahole makes from the DWARF of the build.
+/// The BTF of the modules stays off: the schedulers of sched_ext read only the
+/// one of the kernel, and the one of the modules added 20 MiB to the package,
+/// which then passed the 100 MB a file may weigh in a repository on GitHub.
+fn debug_info_fixes(btf: bool) -> Vec<ConfigOp> {
     use ConfigOp::*;
+    if btf {
+        return vec![
+            // The choice of the debug information depends on DEBUG_KERNEL.
+            Enable("DEBUG_KERNEL".into()),
+            Disable("DEBUG_INFO_NONE".into()),
+            Disable("DEBUG_INFO_DWARF4".into()),
+            Disable("DEBUG_INFO_DWARF5".into()),
+            Enable("DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT".into()),
+            // BTF refuses the reduced and the split debug information.
+            Disable("DEBUG_INFO_REDUCED".into()),
+            Disable("DEBUG_INFO_SPLIT".into()),
+            Enable("DEBUG_INFO_BTF".into()),
+            Disable("DEBUG_INFO_BTF_MODULES".into()),
+            Disable("DEBUG_PREEMPT".into()),
+            Disable("GDB_SCRIPTS".into()),
+        ];
+    }
     vec![
         Disable("DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT".into()),
         Disable("DEBUG_INFO_DWARF4".into()),
@@ -72,7 +95,7 @@ fn debug_info_fixes() -> Vec<ConfigOp> {
     ]
 }
 
-fn config_fixes(signing_key: Option<&Path>) -> Vec<ConfigOp> {
+fn config_fixes(signing_key: Option<&Path>, btf: bool) -> Vec<ConfigOp> {
     use ConfigOp::*;
     let mut fixes = vec![
         SetStr("SYSTEM_TRUSTED_KEYS".into(), String::new()),
@@ -85,7 +108,7 @@ fn config_fixes(signing_key: Option<&Path>) -> Vec<ConfigOp> {
         // information, which triples the build time.
         Disable("MODVERSIONS".into()),
     ];
-    fixes.extend(debug_info_fixes());
+    fixes.extend(debug_info_fixes(btf));
     // The embedded controller drivers of the gaming handhelds, missing from the
     // Debian base configuration.
     fixes.push(Module("ASUS_ARMOURY".into()));
@@ -133,6 +156,18 @@ fn scheduler_symbol(patch: &str) -> Option<&'static str> {
     }
 }
 
+/// The pahole of this computer, which makes the BTF of the kernel, as it
+/// names itself ("v1.30").
+fn pahole_version() -> String {
+    Command::new("pahole")
+        .arg("--version")
+        .output()
+        .ok()
+        .map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string())
+        .filter(|v| !v.is_empty())
+        .unwrap_or_else(|| "no pahole".to_string())
+}
+
 pub fn ntsync_in_kernel(version: &str) -> bool {
     major_minor(version).map(|m| m >= (6, 14)).unwrap_or(false)
 }
@@ -175,8 +210,17 @@ pub fn configure(
         emit(Level::Info, &format!("Architecture level {}", recipe.march));
         tree.run(&march);
     }
-    if recipe.sched_ext {
-        tree.run(&[ConfigOp::Enable("SCHED_CLASS_EXT".into())]);
+    let btf = recipe.wants_sched_ext();
+    if recipe.sched_ext && !btf {
+        emit(Level::Warn, "Zen replaces the scheduler of the kernel, so this kernel cannot have sched_ext: left out");
+    }
+    if btf {
+        emit(Level::Info, "sched_ext and the BTF information it needs: the build takes longer");
+        tree.run(&[
+            ConfigOp::Enable("BPF_SYSCALL".into()),
+            ConfigOp::Enable("BPF_JIT".into()),
+            ConfigOp::Enable("SCHED_CLASS_EXT".into()),
+        ]);
     }
     // Device memory accounting, for the gaming daemon that will come. It is a
     // compile-time option, so it goes in now.
@@ -204,7 +248,7 @@ pub fn configure(
         tree.run(&[ConfigOp::Disable("RUST".into())]);
     }
 
-    tree.run(&config_fixes(signing_key));
+    tree.run(&config_fixes(signing_key, btf));
 
     emit(Level::Info, "Resolving the dependencies of the configuration");
     let mut cmd = Command::new("make");
@@ -214,7 +258,11 @@ pub fn configure(
         return Err("make olddefconfig failed".to_string());
     }
     // olddefconfig puts the choice of debug information back to the default.
-    tree.run(&debug_info_fixes());
+    // Turning it off again is safe without another olddefconfig; turning BTF on
+    // is not, so a kernel with sched_ext is checked below instead.
+    if !btf {
+        tree.run(&debug_info_fixes(false));
+    }
 
     // From here on: what olddefconfig dropped silently. A kernel that is named
     // after something it does not have is worse than no kernel.
@@ -261,8 +309,19 @@ pub fn configure(
             return Err("ANDROID_BINDER_DEVICES does not list hwbinder and vndbinder: Waydroid would not start".to_string());
         }
     }
-    if recipe.sched_ext && !tree.is_on("SCHED_CLASS_EXT") {
-        emit(Level::Warn, "SCHED_CLASS_EXT was dropped by olddefconfig: this kernel will not have sched_ext");
+    if btf {
+        if !tree.is_on("DEBUG_INFO_BTF") {
+            return Err(format!(
+                "DEBUG_INFO_BTF was dropped by olddefconfig: it needs pahole 1.22 or newer, and 1.24 or newer with Rust (this computer has {}). A gaming kernel without sched_ext is not built",
+                pahole_version()
+            ));
+        }
+        if !tree.is_on("SCHED_CLASS_EXT") {
+            return Err("SCHED_CLASS_EXT was dropped by olddefconfig: BPF_SYSCALL or BPF_JIT is missing. A gaming kernel without sched_ext is not built".to_string());
+        }
+        if tree.is_on("DEBUG_INFO_BTF_MODULES") {
+            return Err("DEBUG_INFO_BTF_MODULES is on after olddefconfig: the package would pass the 100 MB a file may weigh on GitHub".to_string());
+        }
     }
     Ok(())
 }
@@ -283,14 +342,31 @@ mod tests {
 
     #[test]
     fn signing_changes_the_module_fixes() {
-        let signed = config_fixes(Some(Path::new("/home/u/.config/k/MOK_combined.pem")));
+        let signed = config_fixes(Some(Path::new("/home/u/.config/k/MOK_combined.pem")), false);
         assert!(signed.contains(&ConfigOp::Enable("MODULE_SIG".into())));
         assert!(signed.iter().any(|o| matches!(o, ConfigOp::SetStr(n, v) if n == "MODULE_SIG_KEY" && v.ends_with("MOK_combined.pem"))));
         assert!(!signed.contains(&ConfigOp::Disable("MODULE_SIG".into())));
-        let plain = config_fixes(None);
+        let plain = config_fixes(None, false);
         assert!(plain.contains(&ConfigOp::Disable("MODULE_SIG".into())));
         assert!(plain.contains(&ConfigOp::Disable("SECURITY_LOCKDOWN_LSM".into())));
         assert!(plain.contains(&ConfigOp::Disable("MODVERSIONS".into())));
+    }
+
+    #[test]
+    fn only_sched_ext_turns_the_debug_information_on() {
+        let off = debug_info_fixes(false);
+        assert!(off.contains(&ConfigOp::Enable("DEBUG_INFO_NONE".into())));
+        assert!(off.contains(&ConfigOp::Disable("DEBUG_INFO_BTF".into())));
+        let btf = debug_info_fixes(true);
+        assert!(btf.contains(&ConfigOp::Enable("DEBUG_KERNEL".into())));
+        assert!(btf.contains(&ConfigOp::Enable("DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT".into())));
+        assert!(btf.contains(&ConfigOp::Enable("DEBUG_INFO_BTF".into())));
+        assert!(btf.contains(&ConfigOp::Disable("DEBUG_INFO_NONE".into())));
+        assert!(btf.contains(&ConfigOp::Disable("DEBUG_INFO_REDUCED".into())));
+        // The BTF of the modules made the package too big for GitHub.
+        assert!(btf.contains(&ConfigOp::Disable("DEBUG_INFO_BTF_MODULES".into())));
+        assert!(!btf.contains(&ConfigOp::Enable("DEBUG_INFO_BTF_MODULES".into())));
+        assert!(config_fixes(None, true).contains(&ConfigOp::Enable("DEBUG_INFO_BTF".into())));
     }
 
     #[test]

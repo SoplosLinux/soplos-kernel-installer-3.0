@@ -50,6 +50,12 @@ pub fn kernel_name(patches: &[&str], march: &str, channel: &str) -> String {
     parts.join("-")
 }
 
+/// The gaming kernels of the batch, the only ones built with sched_ext: BORE
+/// with NTSYNC, and X3D, which carries both.
+pub fn gets_sched_ext(patches: &[String]) -> bool {
+    patches.iter().any(|p| p == "bore") && patches.iter().any(|p| p == "ntsync")
+}
+
 pub fn release_queue(channel: &str) -> Vec<BatchJob> {
     let mut jobs = Vec::new();
     let job = |patches: &[&str], march: &str| BatchJob { name: kernel_name(patches, march, channel), patches: patches.iter().map(|p| p.to_string()).collect(), march: march.to_string() };
@@ -300,7 +306,10 @@ fn run(ctx: &Ctx, spec: &BatchSpec) -> Result<String, String> {
             sign: false,
             cores: spec.cores,
             reuse_sources: false,
-            sched_ext: true,
+            // Only the gaming kernels: BORE with NTSYNC, and X3D on top of them.
+            // The debug information sched_ext needs makes a build several times
+            // longer, which the rest of the batch does not pay.
+            sched_ext: gets_sched_ext(&job.patches),
         };
         let options = Options { kdeb: kdeb(spec.revision), keep_tarball: true, check_deps: false };
         let release = match pipeline::build_kernel(ctx, &recipe, &options) {
@@ -346,6 +355,22 @@ mod tests {
         assert_eq!(kernel_name(&["bore", "ntsync", "x3d"], "v4", ""), "soplos-x3d-v4");
         assert_eq!(kernel_name(&["rt"], "v2", "rc"), "soplos-rc-rt-v2");
         assert_eq!(kernel_name(&["bore", "ntsync", "x3d"], "v3", "lts"), "soplos-lts-x3d-v3");
+    }
+
+    #[test]
+    fn only_the_gaming_kernels_get_sched_ext() {
+        let with: Vec<String> = release_queue("").into_iter().filter(|j| gets_sched_ext(&j.patches)).map(|j| j.name).collect();
+        assert_eq!(
+            with,
+            vec![
+                "soplos-bore-ntsync-v1",
+                "soplos-bore-ntsync-v2",
+                "soplos-bore-ntsync-v3",
+                "soplos-x3d-v3",
+                "soplos-bore-ntsync-v4",
+                "soplos-x3d-v4"
+            ]
+        );
     }
 
     #[test]

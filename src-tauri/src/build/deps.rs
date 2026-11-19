@@ -6,9 +6,12 @@ use serde::Serialize;
 use std::path::Path;
 use std::process::Command;
 
-pub const REQUIRED: [&str; 28] = [
+pub const REQUIRED: [&str; 29] = [
     "make", "gcc", "g++", "flex", "bison", "bc", "curl", "tar", "rsync", "cpio", "kmod", "binutils", "fakeroot", "dpkg-dev", "patch", "xz-utils", "zstd",
     "libssl-dev", "libelf-dev", "linux-libc-dev", "libncurses-dev", "pkg-config", "gettext", "dwarves", "libdw-dev",
+    // With BTF (the gaming kernels, for sched_ext) the build compiles
+    // resolve_btfids, and the libbpf inside it includes <zlib.h>.
+    "zlib1g-dev",
     // Rust, for the Binder driver.
     "rustc", "rust-src", "bindgen",
 ];
@@ -52,7 +55,9 @@ fn is_there(package: &str) -> bool {
         // library. A `rustc` that is only a program on the PATH is not enough:
         // without the source the kernel says Rust is not available.
         "rustc" | "rust-src" => installed(package) || rustc_has_core_source("rustc"),
-        "dpkg-dev" | "libssl-dev" | "libelf-dev" | "linux-libc-dev" | "libncurses-dev" | "libdw-dev" | "libclang-dev" | "libc6-dev" | "dwarves" => installed(package),
+        "dpkg-dev" | "libssl-dev" | "libelf-dev" | "linux-libc-dev" | "libncurses-dev" | "libdw-dev" | "libclang-dev" | "libc6-dev" | "dwarves" | "zlib1g-dev" => {
+            installed(package)
+        }
         other => program_present(other) || installed(other),
     }
 }
@@ -63,6 +68,8 @@ fn sentinel(package: &str) -> Option<&'static str> {
         "libssl-dev" => Some("/usr/include/openssl/opensslv.h"),
         // objtool includes <gelf.h>.
         "libelf-dev" => Some("/usr/include/gelf.h"),
+        // libbpf of resolve_btfids includes <zlib.h>.
+        "zlib1g-dev" => Some("/usr/include/zlib.h"),
         _ => None,
     }
 }
